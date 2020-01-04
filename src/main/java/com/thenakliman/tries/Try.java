@@ -3,6 +3,8 @@ package com.thenakliman.tries;/*
  */
 
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class Try {
   public interface IProcedure {
@@ -11,6 +13,97 @@ public class Try {
 
   public static CodeBlock toCall(IProcedure procedure) {
     return new CodeBlock(procedure);
+  }
+
+  public static <T> SupplierCodeBlock<T> toGet(Supplier<T> supplier) {
+    return new SupplierCodeBlock<>(supplier);
+  }
+
+  public static class SupplierCodeBlock<T> {
+    final private Supplier<T> supplier;
+
+    private SupplierCodeBlock(Supplier<T> supplier) {
+      this.supplier = supplier;
+    }
+
+    CodeWithRuntimeException<T> acceptRuntimeException(Class<? extends RuntimeException> exceptionClass) {
+      return new CodeWithRuntimeException<>(supplier, exceptionClass);
+    }
+
+    public static class CodeWithRuntimeException<T> {
+      final private Supplier<T> supplier;
+      final private Class<? extends RuntimeException> exceptionClass;
+
+      public CodeWithRuntimeException(Supplier<T> supplier, Class<? extends RuntimeException> exceptionClass) {
+        this.supplier = supplier;
+        this.exceptionClass = exceptionClass;
+      }
+
+      public ITExceptionHandler<T> thenGet(Function<RuntimeException, T> exceptionFunction) {
+        return new ExceptionHandler<>(this.supplier, exceptionClass, exceptionFunction);
+      }
+
+      public ITExceptionHandler<T> thenRethrow(Function<RuntimeException, ? extends RuntimeException> exceptionFunction) {
+        return new RethrowExceptionHandler<>(this.supplier, exceptionClass, exceptionFunction);
+      }
+    }
+
+    interface ITExceptionHandler<T> {
+      T done();
+    }
+
+    public static class RethrowExceptionHandler<T> implements ITExceptionHandler<T> {
+      final private Supplier<T> supplier;
+      final private Class<? extends Throwable> exceptionClass;
+      final private Function<RuntimeException, ? extends RuntimeException> exceptionFunction;
+
+      public RethrowExceptionHandler(Supplier<T> supplier,
+                                     Class<? extends RuntimeException> exceptionClass,
+                                     Function<RuntimeException, ? extends RuntimeException> exceptionFunction) {
+
+        this.supplier = supplier;
+        this.exceptionClass = exceptionClass;
+        this.exceptionFunction = exceptionFunction;
+      }
+
+      public T done() {
+        try {
+          return supplier.get();
+        } catch (RuntimeException exception) {
+          if (exceptionClass.isInstance(exception)) {
+            throw exceptionFunction.apply(exception);
+          } else {
+            throw exception;
+          }
+        }
+      }
+    }
+
+    public static class ExceptionHandler<T> implements ITExceptionHandler<T> {
+      final private Supplier<T> supplier;
+      final private Class<? extends Throwable> exceptionClass;
+      final private Function<RuntimeException, T> exceptionTFunction;
+
+      public ExceptionHandler(final Supplier<T> supplier,
+                              Class<? extends RuntimeException> exceptionClass,
+                              Function<RuntimeException, T> exceptionTFunction) {
+
+        this.supplier = supplier;
+        this.exceptionClass = exceptionClass;
+        this.exceptionTFunction = exceptionTFunction;
+      }
+
+      public T done() {
+        try {
+          return supplier.get();
+        } catch (RuntimeException exception) {
+          if (exceptionClass.isInstance(exception)) {
+            return exceptionTFunction.apply(exception);
+          }
+          throw exception;
+        }
+      }
+    }
   }
 
   static class CodeBlock {
@@ -33,12 +126,47 @@ public class Try {
         this.exceptionClass = exceptionClass;
       }
 
-      public ExceptionHandler thenCall(Consumer<RuntimeException> exceptionConsumer) {
+      public IExceptionHandler thenCall(Consumer<RuntimeException> exceptionConsumer) {
         return new ExceptionHandler(this.procedure, exceptionClass, exceptionConsumer);
+      }
+
+      public IExceptionHandler thenRethrow(Function<RuntimeException, ? extends RuntimeException> exceptionFunction) {
+        return new RethrowExceptionHandler(this.procedure, exceptionClass, exceptionFunction);
       }
     }
 
-    public static class ExceptionHandler {
+    interface IExceptionHandler {
+      void done();
+    }
+
+    public static class RethrowExceptionHandler implements IExceptionHandler {
+      final private IProcedure procedure;
+      final private Class<? extends Throwable> exceptionClass;
+      final private Function<RuntimeException, ? extends RuntimeException> exceptionFunction;
+
+      public RethrowExceptionHandler(IProcedure procedure,
+                                     Class<? extends RuntimeException> exceptionClass,
+                                     Function<RuntimeException, ? extends RuntimeException> exceptionFunction) {
+
+        this.procedure = procedure;
+        this.exceptionClass = exceptionClass;
+        this.exceptionFunction = exceptionFunction;
+      }
+
+      public void done() {
+        try {
+          procedure.call();
+        } catch (RuntimeException exception) {
+          if (exceptionClass.isInstance(exception)) {
+            throw exceptionFunction.apply(exception);
+          } else {
+            throw exception;
+          }
+        }
+      }
+    }
+
+    public static class ExceptionHandler implements IExceptionHandler {
       final private IProcedure procedure;
       final private Class<? extends Throwable> exceptionClass;
       final private Consumer<RuntimeException> consumer;
