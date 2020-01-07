@@ -17,7 +17,7 @@ public class TryTest {
   public ExpectedException expectedException = ExpectedException.none();
 
   @Test
-  public void tryToCall_tryToCallThenCall_thenCalled_whenExceptionIsNotRaised() {
+  public void try_tryToCallThenCall_thenCalled_whenExceptionIsNotRaised() {
     TestHelper testHelper = mock(TestHelper.class);
 
     Try.toCall(testHelper::thenCallMe)
@@ -30,7 +30,22 @@ public class TryTest {
   }
 
   @Test
-  public void tryToCall_tryToCallThenCallFinallyDone_finallyDoneIsExecuted_whenExceptionIsNotRaised() {
+  public void try_tryToCallThenCallElseCall_thenCalledElseCalledFinallyCalled_whenExceptionIsNotRaised() {
+    TestHelper testHelper = mock(TestHelper.class);
+
+    Try.toCall(testHelper::thenCallMe)
+            .acceptRuntimeException(RuntimeException.class)
+            .thenCall((exception) -> testHelper.throwException())
+            .elseCall(testHelper::elseCallMe)
+            .done();
+
+    verify(testHelper).thenCallMe();
+    verify(testHelper, times(0)).throwException();
+    verify(testHelper).elseCallMe();
+  }
+
+  @Test
+  public void try_tryToCallThenCallFinallyDone_finallyDoneIsExecuted_whenExceptionIsNotRaised() {
     TestHelper testHelper = mock(TestHelper.class);
 
     Try.toCall(testHelper::thenCallMe)
@@ -44,7 +59,23 @@ public class TryTest {
   }
 
   @Test
-  public void tryToCall_whenExceptionIsRaised() {
+  public void try_tryToCallThenCallElseCallFinallyDone_thenCallfinallyDoneElseCall_whenExceptionIsNotRaised() {
+    TestHelper testHelper = mock(TestHelper.class);
+
+    Try.toCall(testHelper::thenCallMe)
+            .acceptRuntimeException(RuntimeException.class)
+            .thenCall((exception) -> testHelper.throwException())
+            .elseCall(testHelper::elseCallMe)
+            .finallyDone(testHelper::finallCallMe);
+
+    verify(testHelper).thenCallMe();
+    verify(testHelper).finallCallMe();
+    verify(testHelper).elseCallMe();
+    verify(testHelper, times(0)).throwException();
+  }
+
+  @Test
+  public void try_tryToCallThenCall_throwExceptionCalled_whenExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     doThrow(new IllegalArgumentException("some argument")).when(testHelper).throwException();
 
@@ -58,7 +89,23 @@ public class TryTest {
   }
 
   @Test
-  public void tryToCall_tryToCallThenCallFinallyDone_finallyDoneIsCalled_whenExceptionIsRaised() {
+  public void try_tryToCallThenCallElseCall_throwExceptionCalledElseNotCalled_whenExceptionIsRaised() {
+    TestHelper testHelper = mock(TestHelper.class);
+    doThrow(new IllegalArgumentException("some argument")).when(testHelper).throwException();
+
+    Try.toCall(testHelper::throwException)
+            .acceptRuntimeException(IllegalArgumentException.class)
+            .thenCall((exception) -> testHelper.thenCallMe())
+            .elseCall(testHelper::elseCallMe)
+            .done();
+
+    verify(testHelper).throwException();
+    verify(testHelper).thenCallMe();
+    verify(testHelper, times(0)).elseCallMe();
+  }
+
+  @Test
+  public void try_tryToCallThenCallFinallyDone_finallyDoneIsCalled_whenExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     doThrow(new IllegalArgumentException("some argument")).when(testHelper).throwException();
 
@@ -70,6 +117,23 @@ public class TryTest {
     verify(testHelper).throwException();
     verify(testHelper).thenCallMe();
     verify(testHelper).finallCallMe();
+  }
+
+  @Test
+  public void try_tryToCallThenCallElseCallFinallyDone_finallyDoneIsCalledElseNotCalled_whenExceptionIsRaised() {
+    TestHelper testHelper = mock(TestHelper.class);
+    doThrow(new IllegalArgumentException("some argument")).when(testHelper).throwException();
+
+    Try.toCall(testHelper::throwException)
+            .acceptRuntimeException(IllegalArgumentException.class)
+            .thenCall((exception) -> testHelper.thenCallMe())
+            .elseCall(testHelper::elseCallMe)
+            .finallyDone(testHelper::finallCallMe);
+
+    verify(testHelper).throwException();
+    verify(testHelper).thenCallMe();
+    verify(testHelper).finallCallMe();
+    verify(testHelper, times(0)).elseCallMe();
   }
 
   @Test
@@ -85,6 +149,25 @@ public class TryTest {
             .done();
   }
 
+  @Test
+  public void try_toCallThenThrowElseCall_throwExceptionElseNotCalled_whenExceptionIsRaised() {
+    TestHelper testHelper = mock(TestHelper.class);
+    doThrow(new RuntimeException("some argument ")).when(testHelper).throwException();
+
+    try {
+      Try.toCall(testHelper::throwException)
+              .acceptRuntimeException(RuntimeException.class)
+              .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
+              .elseCall(testHelper::elseCallMe)
+              .done();
+      fail("Expected IllegalArgumentException.");
+    } catch (IllegalArgumentException exception) {
+      assertThat(exception.getMessage(), is("some argument some value"));
+    }
+    verify(testHelper, times(0)).elseCallMe();
+  }
+
+  @Test
   public void try_toCallThenThrowFinallyDone_throwExceptionFinallyCalled_whenExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     doThrow(new RuntimeException("some argument ")).when(testHelper).throwException();
@@ -103,6 +186,26 @@ public class TryTest {
   }
 
   @Test
+  public void try_toCallThenThrowElseCallFinallyDone_throwExceptionFinallyCalledElseNotCalled_whenExceptionIsRaised() {
+    TestHelper testHelper = mock(TestHelper.class);
+    doThrow(new RuntimeException("some argument ")).when(testHelper).throwException();
+
+    try {
+      Try.toCall(testHelper::throwException)
+              .acceptRuntimeException(RuntimeException.class)
+              .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
+              .elseCall(testHelper::elseCallMe)
+              .finallyDone(testHelper::finallCallMe);
+      fail("Expected IllegalArgumentException.");
+    } catch (IllegalArgumentException exception) {
+      assertThat(exception.getMessage(), is("some argument some value"));
+    }
+    verify(testHelper).finallCallMe();
+    verify(testHelper).throwException();
+    verify(testHelper, times(0)).elseCallMe();
+  }
+
+  @Test
   public void try_toCallThenThrow_throwException_whenChildExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     doThrow(new IllegalStateException("some argument ")).when(testHelper).throwException();
@@ -113,6 +216,25 @@ public class TryTest {
             .acceptRuntimeException(RuntimeException.class)
             .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
             .done();
+  }
+
+  @Test
+  public void try_toCallThenThrowThenElse_throwExceptionElseCallNotCalled_whenChildExceptionIsRaised() {
+    TestHelper testHelper = mock(TestHelper.class);
+    doThrow(new IllegalStateException("some argument ")).when(testHelper).throwException();
+
+    try {
+      Try.toCall(testHelper::throwException)
+              .acceptRuntimeException(RuntimeException.class)
+              .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
+              .elseCall(testHelper::elseCallMe)
+              .done();
+    } catch (IllegalArgumentException exception) {
+      assertThat(exception.getMessage(), is("some argument some value"));
+    }
+
+    verify(testHelper).throwException();
+    verify(testHelper, times(0)).elseCallMe();
   }
 
   @Test
@@ -132,6 +254,27 @@ public class TryTest {
 
     verify(testHelper).throwException();
     verify(testHelper).finallCallMe();
+  }
+
+  @Test
+  public void try_toCallThenThrowElseCallFinallyDone_throwExceptionFinallyCalledElseCallNotCalled_whenChildExceptionIsRaised() {
+    TestHelper testHelper = mock(TestHelper.class);
+    doThrow(new IllegalStateException("some argument ")).when(testHelper).throwException();
+
+    try {
+      Try.toCall(testHelper::throwException)
+              .acceptRuntimeException(RuntimeException.class)
+              .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
+              .elseCall(testHelper::elseCallMe)
+              .finallyDone(testHelper::finallCallMe);
+      fail("Expected IllegalArgumentException.");
+    } catch (IllegalArgumentException exception) {
+      assertThat(exception.getMessage(), is("some argument some value"));
+    }
+
+    verify(testHelper).throwException();
+    verify(testHelper).finallCallMe();
+    verify(testHelper, times(0)).elseCallMe();
   }
 
   @Test
@@ -251,6 +394,10 @@ public class TryTest {
 
   static class TestHelper {
     void thenCallMe() {
+      System.out.println("then call me");
+    }
+
+    void elseCallMe() {
       System.out.println("then call me");
     }
 
