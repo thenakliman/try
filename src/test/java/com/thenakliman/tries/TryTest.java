@@ -36,10 +36,10 @@ public class TryTest {
     Try.toCall(testHelper::thenCallMe)
             .acceptRuntimeException(RuntimeException.class)
             .thenCall((exception) -> testHelper.throwException())
-            .finallyDone(testHelper::elseCallMe);
+            .finallyDone(testHelper::finallCallMe);
 
     verify(testHelper).thenCallMe();
-    verify(testHelper).elseCallMe();
+    verify(testHelper).finallCallMe();
     verify(testHelper, times(0)).throwException();
   }
 
@@ -65,11 +65,11 @@ public class TryTest {
     Try.toCall(testHelper::throwException)
             .acceptRuntimeException(IllegalArgumentException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
-            .finallyDone(testHelper::elseCallMe);
+            .finallyDone(testHelper::finallCallMe);
 
     verify(testHelper).throwException();
     verify(testHelper).thenCallMe();
-    verify(testHelper).elseCallMe();
+    verify(testHelper).finallCallMe();
   }
 
   @Test
@@ -93,12 +93,12 @@ public class TryTest {
       Try.toCall(testHelper::throwException)
               .acceptRuntimeException(RuntimeException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
-              .finallyDone(testHelper::elseCallMe);
+              .finallyDone(testHelper::finallCallMe);
       fail("Expected IllegalArgumentException.");
     } catch (IllegalArgumentException exception) {
       assertThat(exception.getMessage(), is("some argument some value"));
     }
-    verify(testHelper).elseCallMe();
+    verify(testHelper).finallCallMe();
     verify(testHelper).throwException();
   }
 
@@ -124,14 +124,14 @@ public class TryTest {
       Try.toCall(testHelper::throwException)
               .acceptRuntimeException(RuntimeException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
-              .finallyDone(testHelper::elseCallMe);
+              .finallyDone(testHelper::finallCallMe);
       fail("Expected IllegalArgumentException.");
     } catch (IllegalArgumentException exception) {
       assertThat(exception.getMessage(), is("some argument some value"));
     }
 
     verify(testHelper).throwException();
-    verify(testHelper).elseCallMe();
+    verify(testHelper).finallCallMe();
   }
 
   @Test
@@ -149,9 +149,9 @@ public class TryTest {
     Integer done = Try.toGet(() -> 10)
             .acceptRuntimeException(RuntimeException.class)
             .thenGet((exception) -> 20)
-            .finallyDone(testHelper::elseCallMe);
+            .finallyDone(testHelper::finallCallMe);
     assertThat(done, is(10));
-    verify(testHelper).elseCallMe();
+    verify(testHelper).finallCallMe();
   }
 
   @Test
@@ -183,9 +183,9 @@ public class TryTest {
     Integer done = Try.toGet(supplier)
             .acceptRuntimeException(RuntimeException.class)
             .thenGet((exception) -> 20)
-            .finallyDone(testHelper::elseCallMe);
+            .finallyDone(testHelper::finallCallMe);
     assertThat(done, is(20));
-    verify(testHelper).elseCallMe();
+    verify(testHelper).finallCallMe();
   }
 
   @Test
@@ -203,10 +203,10 @@ public class TryTest {
     Integer done = Try.toGet(() -> 10)
             .acceptRuntimeException(RuntimeException.class)
             .thenRethrow((exception) -> new IllegalArgumentException(""))
-            .finallyDone(testHelper::elseCallMe);
+            .finallyDone(testHelper::finallCallMe);
 
     assertThat(done, is(10));
-    verify(testHelper).elseCallMe();
+    verify(testHelper).finallCallMe();
   }
 
   @Test
@@ -240,13 +240,13 @@ public class TryTest {
       Try.toGet(supplier)
               .acceptRuntimeException(RuntimeException.class)
               .thenRethrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
-              .finallyDone(testHelper::elseCallMe);
+              .finallyDone(testHelper::finallCallMe);
       fail("Expected RuntimeException.");
     } catch (RuntimeException exception) {
       assertThat(exception.getMessage(), is("illegal run time"));
     }
 
-    verify(testHelper).elseCallMe();
+    verify(testHelper).finallCallMe();
   }
 
   static class TestHelper {
@@ -254,7 +254,7 @@ public class TryTest {
       System.out.println("then call me");
     }
 
-    void elseCallMe() {
+    void finallCallMe() {
       System.out.println("else call me");
     }
 
