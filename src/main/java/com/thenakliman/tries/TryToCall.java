@@ -6,31 +6,31 @@ import java.util.function.Function;
 import static com.thenakliman.tries.Constant.DO_NOTHING;
 
 class TryToCall {
-  final private Callable thenCallable;
+  final private Callable callable;
 
-  TryToCall(final Callable thenCallable) {
-    this.thenCallable = thenCallable;
+  TryToCall(final Callable callable) {
+    this.callable = callable;
   }
 
   CodeWithRuntimeException acceptRuntimeException(final Class<? extends RuntimeException> exceptionClass) {
-    return new CodeWithRuntimeException(this.thenCallable, exceptionClass);
+    return new CodeWithRuntimeException(this.callable, exceptionClass);
   }
 
   public static class CodeWithRuntimeException {
-    final private Callable thenCallable;
+    final private Callable callable;
     final private Class<? extends RuntimeException> exceptionClass;
 
-    public CodeWithRuntimeException(final Callable thenCallable, final Class<? extends RuntimeException> exceptionClass) {
-      this.thenCallable = thenCallable;
+    public CodeWithRuntimeException(final Callable callable, final Class<? extends RuntimeException> exceptionClass) {
+      this.callable = callable;
       this.exceptionClass = exceptionClass;
     }
 
-    public IExceptionHandler thenCall(final Consumer<RuntimeException> exceptionConsumer) {
-      return new ExceptionHandler(this.thenCallable, exceptionClass, exceptionConsumer, DO_NOTHING);
+    public IExceptionHandler thenCall(final Consumer<RuntimeException> thenCallable) {
+      return new ExceptionHandler(this.callable, exceptionClass, thenCallable, DO_NOTHING);
     }
 
     public IExceptionHandler thenRethrow(final Function<RuntimeException, ? extends RuntimeException> exceptionFunction) {
-      return new RethrowExceptionHandler(this.thenCallable, this.exceptionClass, exceptionFunction, DO_NOTHING);
+      return new RethrowExceptionHandler(this.callable, this.exceptionClass, exceptionFunction, DO_NOTHING);
     }
   }
 
@@ -43,31 +43,31 @@ class TryToCall {
   }
 
   public static class RethrowExceptionHandler implements IExceptionHandler {
-    final private Callable thenCallable;
+    final private Callable callable;
     final private Class<? extends RuntimeException> exceptionClass;
-    final private Function<RuntimeException, ? extends RuntimeException> exceptionFunction;
+    final private Function<RuntimeException, ? extends RuntimeException> thenFunction;
     final private Callable elseCallable;
 
-    public RethrowExceptionHandler(final Callable thenCallable,
+    public RethrowExceptionHandler(final Callable callable,
                                    final Class<? extends RuntimeException> exceptionClass,
-                                   final Function<RuntimeException, ? extends RuntimeException> exceptionFunction,
+                                   final Function<RuntimeException, ? extends RuntimeException> thenFunction,
                                    final Callable elseCallable) {
 
-      this.thenCallable = thenCallable;
+      this.callable = callable;
       this.exceptionClass = exceptionClass;
-      this.exceptionFunction = exceptionFunction;
+      this.thenFunction = thenFunction;
       this.elseCallable = elseCallable;
     }
 
     @Override
     public void done() {
-      boolean success;
+      boolean success = false;
       try {
-        this.thenCallable.call();
+        this.callable.call();
         success = true;
       } catch (RuntimeException exception) {
         if (this.exceptionClass.isInstance(exception)) {
-          throw this.exceptionFunction.apply(exception);
+          throw this.thenFunction.apply(exception);
         } else {
           throw exception;
         }
@@ -80,13 +80,13 @@ class TryToCall {
 
     @Override
     public void finallyDone(final Callable finallyCallable) {
-      boolean success;
+      boolean success = false;
       try {
-        this.thenCallable.call();
+        this.callable.call();
         success = true;
       } catch (RuntimeException exception) {
         if (this.exceptionClass.isInstance(exception)) {
-          throw this.exceptionFunction.apply(exception);
+          throw this.thenFunction.apply(exception);
         } else {
           throw exception;
         }
@@ -102,27 +102,27 @@ class TryToCall {
     @Override
     public IExceptionHandler elseCall(final Callable elseCallable) {
       return new RethrowExceptionHandler(
-              this.thenCallable,
+              this.callable,
               this.exceptionClass,
-              this.exceptionFunction,
+              this.thenFunction,
               elseCallable);
     }
   }
 
   public static class ExceptionHandler implements IExceptionHandler {
-    final private Callable thenCallable;
+    final private Callable callable;
     final private Class<? extends RuntimeException> exceptionClass;
-    final private Consumer<RuntimeException> exceptionConsumer;
+    final private Consumer<RuntimeException> thenConsumer;
     final private Callable elseCallable;
 
-    public ExceptionHandler(final Callable thenCallable,
+    public ExceptionHandler(final Callable callable,
                             final Class<? extends RuntimeException> exceptionClass,
-                            final Consumer<RuntimeException> exceptionConsumer,
+                            final Consumer<RuntimeException> thenConsumer,
                             final Callable elseCallable) {
 
-      this.thenCallable = thenCallable;
+      this.callable = callable;
       this.exceptionClass = exceptionClass;
-      this.exceptionConsumer = exceptionConsumer;
+      this.thenConsumer = thenConsumer;
       this.elseCallable = elseCallable;
     }
 
@@ -130,11 +130,11 @@ class TryToCall {
     public void done() {
       boolean success = false;
       try {
-        this.thenCallable.call();
+        this.callable.call();
         success = true;
       } catch (RuntimeException exception) {
         if (this.exceptionClass.isInstance(exception)) {
-          this.exceptionConsumer.accept(exception);
+          this.thenConsumer.accept(exception);
         } else {
           throw exception;
         }
@@ -149,11 +149,11 @@ class TryToCall {
     public void finallyDone(final Callable finallyCallable) {
       boolean success = false;
       try {
-        this.thenCallable.call();
+        this.callable.call();
         success = true;
       } catch (RuntimeException exception) {
         if (this.exceptionClass.isInstance(exception)) {
-          this.exceptionConsumer.accept(exception);
+          this.thenConsumer.accept(exception);
         } else {
           throw exception;
         }
@@ -168,7 +168,7 @@ class TryToCall {
 
     @Override
     public IExceptionHandler elseCall(final Callable elseCallable) {
-      return new ExceptionHandler(this.thenCallable, this.exceptionClass, this.exceptionConsumer, elseCallable);
+      return new ExceptionHandler(this.callable, this.exceptionClass, this.thenConsumer, elseCallable);
     }
   }
 }
