@@ -61,10 +61,8 @@ class TryToCall {
 
     @Override
     public void done() {
-      boolean success = false;
       try {
         this.callable.call();
-        success = true;
       } catch (RuntimeException exception) {
         if (this.exceptionClass.isInstance(exception)) {
           throw this.thenFunction.apply(exception);
@@ -73,17 +71,13 @@ class TryToCall {
         }
       }
 
-      if (success) {
-        this.elseCallable.call();
-      }
+      this.elseCallable.call();
     }
 
     @Override
     public void finallyDone(final Callable finallyCallable) {
-      boolean success = false;
       try {
         this.callable.call();
-        success = true;
       } catch (RuntimeException exception) {
         if (this.exceptionClass.isInstance(exception)) {
           throw this.thenFunction.apply(exception);
@@ -94,9 +88,7 @@ class TryToCall {
         finallyCallable.call();
       }
 
-      if (success) {
-        this.elseCallable.call();
-      }
+      this.elseCallable.call();
     }
 
     @Override
