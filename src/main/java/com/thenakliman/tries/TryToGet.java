@@ -1,63 +1,70 @@
 package com.thenakliman.tries;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 class TryToGet<T> {
-  final private Supplier<T> supplier;
+  final private Supplier<T> valueSupplier;
 
-  TryToGet(Supplier<T> supplier) {
-    this.supplier = supplier;
+  TryToGet(final Supplier<T> valueSupplier) {
+    this.valueSupplier = valueSupplier;
   }
 
-  CodeWithRuntimeException<T> acceptRuntimeException(Class<? extends RuntimeException> exceptionClass) {
-    return new CodeWithRuntimeException<>(supplier, exceptionClass);
+  SupplierWithRuntimeException<T> acceptRuntimeException(final Class<? extends RuntimeException> exceptionClass) {
+    return new SupplierWithRuntimeException<>(valueSupplier, exceptionClass);
   }
 
-  public static class CodeWithRuntimeException<T> {
-    final private Supplier<T> supplier;
+  public static class SupplierWithRuntimeException<T> {
+    final private Supplier<T> valueSupplier;
     final private Class<? extends RuntimeException> exceptionClass;
+    final private Consumer<T> DO_NOTHING_CONSUMER = (value) -> {
+    };
 
-    public CodeWithRuntimeException(Supplier<T> supplier, Class<? extends RuntimeException> exceptionClass) {
-      this.supplier = supplier;
+    public SupplierWithRuntimeException(final Supplier<T> valueSupplier, final Class<? extends RuntimeException> exceptionClass) {
+      this.valueSupplier = valueSupplier;
       this.exceptionClass = exceptionClass;
     }
 
-    public IExceptionHandler<T> thenGet(Function<RuntimeException, T> exceptionFunction) {
-      return new ExceptionHandler<>(this.supplier, exceptionClass, exceptionFunction);
+    public IExceptionHandler<T> thenGet(final Function<RuntimeException, T> supplierFromException) {
+      return new ExceptionHandler<>(this.valueSupplier, exceptionClass, supplierFromException, DO_NOTHING_CONSUMER);
     }
 
-    public IExceptionHandler<T> thenRethrow(Function<RuntimeException, ? extends RuntimeException> exceptionFunction) {
-      return new RethrowExceptionHandler<>(this.supplier, exceptionClass, exceptionFunction);
+    public IThrowExceptionHandler<T> thenRethrow(final Function<RuntimeException, ? extends RuntimeException> exceptionFunction) {
+      return new RethrowExceptionHandler<>(this.valueSupplier, exceptionClass, exceptionFunction);
     }
   }
 
-  interface IExceptionHandler<T> {
+  interface IThrowExceptionHandler<T> {
     T done();
 
-    T finallyDone(Callable callable);
+    T finallyDone(final Callable callable);
   }
 
-  public static class RethrowExceptionHandler<T> implements IExceptionHandler<T> {
-    final private Supplier<T> supplier;
-    final private Class<? extends Throwable> exceptionClass;
+  interface IExceptionHandler<T> extends IThrowExceptionHandler<T> {
+    IThrowExceptionHandler<T> elseCall(final Consumer<T> consumer);
+  }
+
+  public static class RethrowExceptionHandler<T> implements IThrowExceptionHandler<T> {
+    final private Supplier<T> valueSupplier;
+    final private Class<? extends RuntimeException> exceptionClass;
     final private Function<RuntimeException, ? extends RuntimeException> exceptionFunction;
 
-    public RethrowExceptionHandler(Supplier<T> supplier,
-                                   Class<? extends RuntimeException> exceptionClass,
-                                   Function<RuntimeException, ? extends RuntimeException> exceptionFunction) {
+    public RethrowExceptionHandler(final Supplier<T> valueSupplier,
+                                   final Class<? extends RuntimeException> exceptionClass,
+                                   final Function<RuntimeException, ? extends RuntimeException> exceptionFunction) {
 
-      this.supplier = supplier;
+      this.valueSupplier = valueSupplier;
       this.exceptionClass = exceptionClass;
       this.exceptionFunction = exceptionFunction;
     }
 
     public T done() {
       try {
-        return supplier.get();
+        return this.valueSupplier.get();
       } catch (RuntimeException exception) {
-        if (exceptionClass.isInstance(exception)) {
-          throw exceptionFunction.apply(exception);
+        if (this.exceptionClass.isInstance(exception)) {
+          throw this.exceptionFunction.apply(exception);
         } else {
           throw exception;
         }
@@ -67,10 +74,10 @@ class TryToGet<T> {
     @Override
     public T finallyDone(Callable finallyCallable) {
       try {
-        return supplier.get();
+        return this.valueSupplier.get();
       } catch (RuntimeException exception) {
-        if (exceptionClass.isInstance(exception)) {
-          throw exceptionFunction.apply(exception);
+        if (this.exceptionClass.isInstance(exception)) {
+          throw this.exceptionFunction.apply(exception);
         } else {
           throw exception;
         }
@@ -81,42 +88,61 @@ class TryToGet<T> {
   }
 
   public static class ExceptionHandler<T> implements IExceptionHandler<T> {
-    final private Supplier<T> supplier;
-    final private Class<? extends Throwable> exceptionClass;
+    final private Supplier<T> valueSupplier;
+    final private Class<? extends RuntimeException> exceptionClass;
     final private Function<RuntimeException, T> exceptionFunction;
+    final private Consumer<T> elseConsumer;
 
-    public ExceptionHandler(final Supplier<T> supplier,
-                            Class<? extends RuntimeException> exceptionClass,
-                            Function<? extends RuntimeException, T> exceptionFunction) {
+    public ExceptionHandler(final Supplier<T> valueSupplier,
+                            final Class<? extends RuntimeException> exceptionClass,
+                            final Function<RuntimeException, T> exceptionFunction,
+                            final Consumer<T> elseConsumer) {
 
-      this.supplier = supplier;
+      this.valueSupplier = valueSupplier;
       this.exceptionClass = exceptionClass;
       this.exceptionFunction = exceptionFunction;
+      this.elseConsumer = elseConsumer;
     }
 
+    @Override
     public T done() {
+      final T value;
       try {
-        return supplier.get();
+        value = this.valueSupplier.get();
       } catch (RuntimeException exception) {
-        if (exceptionClass.isInstance(exception)) {
-          return exceptionFunction.apply(exception);
+        if (this.exceptionClass.isInstance(exception)) {
+          return this.exceptionFunction.apply(exception);
         }
         throw exception;
       }
+      this.elseConsumer.accept(value);
+      return value;
     }
 
     @Override
     public T finallyDone(Callable finallyCallable) {
+      final T value;
       try {
-        return supplier.get();
+        value = this.valueSupplier.get();
       } catch (RuntimeException exception) {
-        if (exceptionClass.isInstance(exception)) {
-          return exceptionFunction.apply(exception);
+        if (this.exceptionClass.isInstance(exception)) {
+          return this.exceptionFunction.apply(exception);
         }
         throw exception;
       } finally {
         finallyCallable.call();
       }
+      this.elseConsumer.accept(value);
+      return value;
+    }
+
+    @Override
+    public IThrowExceptionHandler<T> elseCall(final Consumer<T> elseConsumer) {
+      return new ExceptionHandler<>(
+              this.valueSupplier,
+              this.exceptionClass,
+              this.exceptionFunction,
+              elseConsumer);
     }
   }
 }

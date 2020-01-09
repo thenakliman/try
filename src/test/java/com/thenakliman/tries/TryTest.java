@@ -287,6 +287,18 @@ public class TryTest {
   }
 
   @Test
+  public void try_toGetThenGetElseCall_returnGetValueElseCalled_whenExceptionIsNotRaised() {
+    TestHelper testHelper = mock(TestHelper.class);
+    Integer expValue = Try.toGet(() -> 10)
+            .acceptRuntimeException(RuntimeException.class)
+            .thenGet((exception) -> 20)
+            .elseCall((value) -> testHelper.elseCallMe())
+            .done();
+    verify(testHelper).elseCallMe();
+    assertThat(expValue, is(10));
+  }
+
+  @Test
   public void try_toGetThenGetFinallyDone_returnGetValueFinallyCalled_whenExceptionIsNotRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     Integer done = Try.toGet(() -> 10)
@@ -295,6 +307,19 @@ public class TryTest {
             .finallyDone(testHelper::finallCallMe);
     assertThat(done, is(10));
     verify(testHelper).finallCallMe();
+  }
+
+  @Test
+  public void try_toGetThenGetElseCallFinallyDone_returnGetValueFinallyCalledElseCalled_whenExceptionIsNotRaised() {
+    TestHelper testHelper = mock(TestHelper.class);
+    Integer done = Try.toGet(() -> 10)
+            .acceptRuntimeException(RuntimeException.class)
+            .thenGet((exception) -> 20)
+            .elseCall((value) -> testHelper.elseCallMe())
+            .finallyDone(testHelper::finallCallMe);
+    assertThat(done, is(10));
+    verify(testHelper).finallCallMe();
+    verify(testHelper).elseCallMe();
   }
 
   @Test
@@ -314,6 +339,25 @@ public class TryTest {
   }
 
   @Test
+  public void try_toGetThenGetElseCall_returnThenValue_whenExceptionIsRaised() {
+    Supplier<Integer> supplier = () -> {
+      if (true) {
+        throw new IllegalArgumentException("");
+      }
+      return 10;
+    };
+
+    TestHelper testHelper = mock(TestHelper.class);
+    Integer done = Try.toGet(supplier)
+            .acceptRuntimeException(RuntimeException.class)
+            .thenGet((exception) -> 20)
+            .elseCall((value) -> testHelper.elseCallMe())
+            .done();
+    assertThat(done, is(20));
+    verify(testHelper, times(0)).elseCallMe();
+  }
+
+  @Test
   public void try_toGetThenGetFinallyCalled_returnThenValueFinallyCalled_whenExceptionIsRaised() {
     Supplier<Integer> supplier = () -> {
       if (true) {
@@ -329,6 +373,26 @@ public class TryTest {
             .finallyDone(testHelper::finallCallMe);
     assertThat(done, is(20));
     verify(testHelper).finallCallMe();
+  }
+
+  @Test
+  public void try_toGetThenGetElseCallFinallyCall_returnThenValueFinallyCalled_whenExceptionIsRaised() {
+    Supplier<Integer> supplier = () -> {
+      if (true) {
+        throw new IllegalArgumentException("");
+      }
+      return 10;
+    };
+
+    TestHelper testHelper = mock(TestHelper.class);
+    Integer done = Try.toGet(supplier)
+            .acceptRuntimeException(RuntimeException.class)
+            .thenGet((exception) -> 20)
+            .elseCall(value -> testHelper.elseCallMe())
+            .finallyDone(testHelper::finallCallMe);
+    assertThat(done, is(20));
+    verify(testHelper).finallCallMe();
+    verify(testHelper, times(0)).elseCallMe();
   }
 
   @Test
@@ -363,7 +427,7 @@ public class TryTest {
 
     expectedException.expect(RuntimeException.class);
     expectedException.expectMessage("illegal run time");
-    Integer done = Try.toGet(supplier)
+    Try.toGet(supplier)
             .acceptRuntimeException(RuntimeException.class)
             .thenRethrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
             .done();
