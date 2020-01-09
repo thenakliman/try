@@ -83,15 +83,15 @@ class TryToGet<T> {
   public static class ExceptionHandler<T> implements IExceptionHandler<T> {
     final private Supplier<T> supplier;
     final private Class<? extends Throwable> exceptionClass;
-    final private Function<RuntimeException, T> exceptionTFunction;
+    final private Function<RuntimeException, T> exceptionFunction;
 
     public ExceptionHandler(final Supplier<T> supplier,
                             Class<? extends RuntimeException> exceptionClass,
-                            Function<RuntimeException, T> exceptionTFunction) {
+                            Function<? extends RuntimeException, T> exceptionFunction) {
 
       this.supplier = supplier;
       this.exceptionClass = exceptionClass;
-      this.exceptionTFunction = exceptionTFunction;
+      this.exceptionFunction = exceptionFunction;
     }
 
     public T done() {
@@ -99,7 +99,7 @@ class TryToGet<T> {
         return supplier.get();
       } catch (RuntimeException exception) {
         if (exceptionClass.isInstance(exception)) {
-          return exceptionTFunction.apply(exception);
+          return exceptionFunction.apply(exception);
         }
         throw exception;
       }
@@ -111,7 +111,7 @@ class TryToGet<T> {
         return supplier.get();
       } catch (RuntimeException exception) {
         if (exceptionClass.isInstance(exception)) {
-          return exceptionTFunction.apply(exception);
+          return exceptionFunction.apply(exception);
         }
         throw exception;
       } finally {
