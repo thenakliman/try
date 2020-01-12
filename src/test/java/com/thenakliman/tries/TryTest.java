@@ -21,7 +21,7 @@ public class TryTest {
     TestHelper testHelper = mock(TestHelper.class);
 
     Try.toCall(testHelper::thenCallMe)
-            .acceptRuntimeException(RuntimeException.class)
+            .acceptException(RuntimeException.class)
             .thenCall((exception) -> testHelper.throwException())
             .done();
 
@@ -34,7 +34,7 @@ public class TryTest {
     TestHelper testHelper = mock(TestHelper.class);
 
     Try.toCall(testHelper::thenCallMe)
-            .acceptRuntimeException(RuntimeException.class)
+            .acceptException(RuntimeException.class)
             .thenCall((exception) -> testHelper.throwException())
             .elseCall(testHelper::elseCallMe)
             .done();
@@ -49,7 +49,7 @@ public class TryTest {
     TestHelper testHelper = mock(TestHelper.class);
 
     Try.toCall(testHelper::thenCallMe)
-            .acceptRuntimeException(RuntimeException.class)
+            .acceptException(RuntimeException.class)
             .thenCall((exception) -> testHelper.throwException())
             .finallyDone(testHelper::finallCallMe);
 
@@ -63,7 +63,7 @@ public class TryTest {
     TestHelper testHelper = mock(TestHelper.class);
 
     Try.toCall(testHelper::thenCallMe)
-            .acceptRuntimeException(RuntimeException.class)
+            .acceptException(RuntimeException.class)
             .thenCall((exception) -> testHelper.throwException())
             .elseCall(testHelper::elseCallMe)
             .finallyDone(testHelper::finallCallMe);
@@ -80,7 +80,7 @@ public class TryTest {
     doThrow(new IllegalArgumentException("some argument")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptRuntimeException(IllegalArgumentException.class)
+            .acceptException(IllegalArgumentException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
             .done();
 
@@ -94,7 +94,7 @@ public class TryTest {
     doThrow(new IllegalArgumentException("some argument")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptRuntimeException(IllegalArgumentException.class)
+            .acceptException(IllegalArgumentException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
             .elseCall(testHelper::elseCallMe)
             .done();
@@ -110,7 +110,7 @@ public class TryTest {
     doThrow(new IllegalArgumentException("some argument")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptRuntimeException(IllegalArgumentException.class)
+            .acceptException(IllegalArgumentException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
             .finallyDone(testHelper::finallCallMe);
 
@@ -125,7 +125,7 @@ public class TryTest {
     doThrow(new IllegalArgumentException("some argument")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptRuntimeException(IllegalArgumentException.class)
+            .acceptException(IllegalArgumentException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
             .elseCall(testHelper::elseCallMe)
             .finallyDone(testHelper::finallCallMe);
@@ -144,7 +144,7 @@ public class TryTest {
     expectedException.expect(IllegalArgumentException.class);
     expectedException.expectMessage("some argument some value");
     Try.toCall(testHelper::throwException)
-            .acceptRuntimeException(RuntimeException.class)
+            .acceptException(RuntimeException.class)
             .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
             .done();
   }
@@ -156,7 +156,7 @@ public class TryTest {
 
     try {
       Try.toCall(testHelper::throwException)
-              .acceptRuntimeException(RuntimeException.class)
+              .acceptException(RuntimeException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
               .elseCall(testHelper::elseCallMe)
               .done();
@@ -174,7 +174,7 @@ public class TryTest {
 
     try {
       Try.toCall(testHelper::throwException)
-              .acceptRuntimeException(RuntimeException.class)
+              .acceptException(RuntimeException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
               .finallyDone(testHelper::finallCallMe);
       fail("Expected IllegalArgumentException.");
@@ -192,7 +192,7 @@ public class TryTest {
 
     try {
       Try.toCall(testHelper::throwException)
-              .acceptRuntimeException(RuntimeException.class)
+              .acceptException(RuntimeException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
               .elseCall(testHelper::elseCallMe)
               .finallyDone(testHelper::finallCallMe);
@@ -213,7 +213,7 @@ public class TryTest {
     expectedException.expect(IllegalArgumentException.class);
     expectedException.expectMessage("some argument some value");
     Try.toCall(testHelper::throwException)
-            .acceptRuntimeException(RuntimeException.class)
+            .acceptException(RuntimeException.class)
             .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
             .done();
   }
@@ -225,7 +225,7 @@ public class TryTest {
 
     try {
       Try.toCall(testHelper::throwException)
-              .acceptRuntimeException(RuntimeException.class)
+              .acceptException(RuntimeException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
               .elseCall(testHelper::elseCallMe)
               .done();
@@ -244,7 +244,7 @@ public class TryTest {
 
     try {
       Try.toCall(testHelper::throwException)
-              .acceptRuntimeException(RuntimeException.class)
+              .acceptException(RuntimeException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
               .finallyDone(testHelper::finallCallMe);
       fail("Expected IllegalArgumentException.");
@@ -263,7 +263,7 @@ public class TryTest {
 
     try {
       Try.toCall(testHelper::throwException)
-              .acceptRuntimeException(RuntimeException.class)
+              .acceptException(RuntimeException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
               .elseCall(testHelper::elseCallMe)
               .finallyDone(testHelper::finallCallMe);
