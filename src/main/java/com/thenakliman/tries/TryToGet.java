@@ -4,6 +4,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static com.thenakliman.tries.SneakyThrower.sneakyThrow;
+
 class TryToGet<T> {
   final private Supplier<T> valueSupplier;
 
@@ -11,26 +13,27 @@ class TryToGet<T> {
     this.valueSupplier = valueSupplier;
   }
 
-  SupplierWithRuntimeException<T> acceptRuntimeException(final Class<? extends RuntimeException> exceptionClass) {
-    return new SupplierWithRuntimeException<>(valueSupplier, exceptionClass);
+
+  <X extends Throwable> ExceptionSupplier<T> acceptException(final Class<? extends X> exceptionClass) throws X {
+    return new ExceptionSupplier<>(valueSupplier, exceptionClass);
   }
 
-  public static class SupplierWithRuntimeException<T> {
+  public static class ExceptionSupplier<T> {
     final private Supplier<T> valueSupplier;
-    final private Class<? extends RuntimeException> exceptionClass;
+    final private Class<? extends Throwable> exceptionClass;
     final private Consumer<T> DO_NOTHING_CONSUMER = (value) -> {
     };
 
-    public SupplierWithRuntimeException(final Supplier<T> valueSupplier, final Class<? extends RuntimeException> exceptionClass) {
+    public ExceptionSupplier(final Supplier<T> valueSupplier, final Class<? extends Throwable> exceptionClass) {
       this.valueSupplier = valueSupplier;
       this.exceptionClass = exceptionClass;
     }
 
-    public IExceptionHandler<T> thenGet(final Function<RuntimeException, T> supplierFromException) {
-      return new ExceptionHandler<>(this.valueSupplier, exceptionClass, supplierFromException, DO_NOTHING_CONSUMER);
+    public IExceptionHandler<T> thenGet(final Function<Throwable, T> exceptionSupplier) {
+      return new ExceptionHandler<>(this.valueSupplier, exceptionClass, exceptionSupplier, DO_NOTHING_CONSUMER);
     }
 
-    public IThrowExceptionHandler<T> thenRethrow(final Function<RuntimeException, ? extends RuntimeException> exceptionFunction) {
+    public IThrowExceptionHandler<T> thenRethrow(final Function<Throwable, ? extends Throwable> exceptionFunction) {
       return new RethrowExceptionHandler<>(this.valueSupplier, exceptionClass, exceptionFunction);
     }
   }
@@ -47,12 +50,12 @@ class TryToGet<T> {
 
   public static class RethrowExceptionHandler<T> implements IThrowExceptionHandler<T> {
     final private Supplier<T> valueSupplier;
-    final private Class<? extends RuntimeException> exceptionClass;
-    final private Function<RuntimeException, ? extends RuntimeException> exceptionFunction;
+    final private Class<? extends Throwable> exceptionClass;
+    final private Function<Throwable, ? extends Throwable> exceptionFunction;
 
     public RethrowExceptionHandler(final Supplier<T> valueSupplier,
-                                   final Class<? extends RuntimeException> exceptionClass,
-                                   final Function<RuntimeException, ? extends RuntimeException> exceptionFunction) {
+                                   final Class<? extends Throwable> exceptionClass,
+                                   final Function<Throwable, ? extends Throwable> exceptionFunction) {
 
       this.valueSupplier = valueSupplier;
       this.exceptionClass = exceptionClass;
@@ -62,9 +65,10 @@ class TryToGet<T> {
     public T done() {
       try {
         return this.valueSupplier.get();
-      } catch (RuntimeException exception) {
+      } catch (Throwable exception) {
         if (this.exceptionClass.isInstance(exception)) {
-          throw this.exceptionFunction.apply(exception);
+          sneakyThrow(this.exceptionFunction.apply(exception));
+          return null; // needed for compiler
         } else {
           throw exception;
         }
@@ -75,9 +79,10 @@ class TryToGet<T> {
     public T finallyDone(Callable finallyCallable) {
       try {
         return this.valueSupplier.get();
-      } catch (RuntimeException exception) {
+      } catch (Throwable exception) {
         if (this.exceptionClass.isInstance(exception)) {
-          throw this.exceptionFunction.apply(exception);
+          sneakyThrow(this.exceptionFunction.apply(exception));
+          return null; // needed for compiler
         } else {
           throw exception;
         }
@@ -89,13 +94,13 @@ class TryToGet<T> {
 
   public static class ExceptionHandler<T> implements IExceptionHandler<T> {
     final private Supplier<T> valueSupplier;
-    final private Class<? extends RuntimeException> exceptionClass;
-    final private Function<RuntimeException, T> exceptionFunction;
+    final private Class<? extends Throwable> exceptionClass;
+    final private Function<Throwable, T> exceptionFunction;
     final private Consumer<T> elseConsumer;
 
     public ExceptionHandler(final Supplier<T> valueSupplier,
-                            final Class<? extends RuntimeException> exceptionClass,
-                            final Function<RuntimeException, T> exceptionFunction,
+                            final Class<? extends Throwable> exceptionClass,
+                            final Function<Throwable, T> exceptionFunction,
                             final Consumer<T> elseConsumer) {
 
       this.valueSupplier = valueSupplier;
@@ -109,7 +114,7 @@ class TryToGet<T> {
       final T value;
       try {
         value = this.valueSupplier.get();
-      } catch (RuntimeException exception) {
+      } catch (Throwable exception) {
         if (this.exceptionClass.isInstance(exception)) {
           return this.exceptionFunction.apply(exception);
         }
@@ -124,7 +129,7 @@ class TryToGet<T> {
       final T value;
       try {
         value = this.valueSupplier.get();
-      } catch (RuntimeException exception) {
+      } catch (Throwable exception) {
         if (this.exceptionClass.isInstance(exception)) {
           return this.exceptionFunction.apply(exception);
         }
