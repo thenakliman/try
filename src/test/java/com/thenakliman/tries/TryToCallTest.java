@@ -4,8 +4,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.util.function.Supplier;
-
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -127,6 +125,11 @@ public class TryToCallTest {
     Try.toCall(testHelper::throwException)
             .acceptException(IllegalArgumentException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
+            .acceptException(IllegalCallerException.class)
+            .thenCall((expectedException) -> {
+            })
+            .acceptException(RuntimeException.class)
+            .thenRethrow((exception -> new RuntimeException()))
             .elseCall(testHelper::elseCallMe)
             .finallyDone(testHelper::finallCallMe);
 
@@ -134,6 +137,84 @@ public class TryToCallTest {
     verify(testHelper).thenCallMe();
     verify(testHelper).finallCallMe();
     verify(testHelper, times(0)).elseCallMe();
+  }
+
+  @Test
+  public void try_tryToCallThenCallElseCallFinallyDone_finallyDoneIsCalledElseNotCalledSecondThenCalled_whenExceptionIsRaised() {
+    TestHelper testHelper = mock(TestHelper.class);
+    doThrow(new IllegalCallerException("some argument")).when(testHelper).throwException();
+
+    Try.toCall(testHelper::throwException)
+            .acceptException(IllegalArgumentException.class)
+            .thenCall((exception) -> testHelper.thenCallMe())
+            .acceptException(IllegalCallerException.class)
+            .thenCall((expectedException) -> testHelper.thenCallMe1())
+            .acceptException(RuntimeException.class)
+            .thenRethrow((exception -> new RuntimeException()))
+            .elseCall(testHelper::elseCallMe)
+            .finallyDone(testHelper::finallCallMe);
+
+    verify(testHelper).throwException();
+    verify(testHelper).thenCallMe1();
+    verify(testHelper).finallCallMe();
+    verify(testHelper, times(0)).elseCallMe();
+  }
+
+  @Test
+  public void try_tryToCallThenCallElseCallFinallyDone_finallyDoneIsCalledElseNotCalledRethrowException_whenExceptionIsRaised() {
+    TestHelper testHelper = mock(TestHelper.class);
+    doThrow(new IllegalStateException("some argument")).when(testHelper).throwException();
+
+    expectedException.expect(RuntimeException.class);
+    expectedException.expectMessage("new argument");
+    Try.toCall(testHelper::throwException)
+            .acceptException(IllegalArgumentException.class)
+            .thenCall((exception) -> testHelper.thenCallMe())
+            .acceptException(IllegalCallerException.class)
+            .thenCall((expectedException) -> testHelper.thenCallMe1())
+            .acceptException(IllegalStateException.class)
+            .thenRethrow((exception -> new RuntimeException("new argument")))
+            .elseCall(testHelper::elseCallMe)
+            .finallyDone(testHelper::finallCallMe);
+  }
+
+  @Test
+  public void try_tryToCallThenCallElseCallFinallyDone_finallyDoneIsCalledElseCalled_whenExceptionIsRaised() throws Exception {
+    TestHelper testHelper = mock(TestHelper.class);
+    doThrow(new IllegalStateException("some argument")).when(testHelper).throwException();
+    try {
+      Try.toCall(testHelper::throwException)
+              .acceptException(IllegalAccessError.class)
+              .thenCall((exception) -> testHelper.thenCallMe())
+              .acceptException(IllegalCallerException.class)
+              .thenCall((expectedException) -> testHelper.thenCallMe1())
+              .acceptException(IllegalStateException.class)
+              .thenRethrow((exception -> new RuntimeException("new argument")))
+              .elseCall(testHelper::elseCallMe)
+              .finallyDone(testHelper::finallCallMe);
+      fail("expected to throw Exception exception");
+    } catch (Exception exception) {
+      verify(testHelper).throwException();
+      verify(testHelper).finallCallMe();
+    }
+  }
+
+  @Test
+  public void try_tryToCallThenCallElseCallFinallyDone_finallyDoneIsCalledElseCalled_throwCheckedException() throws Exception {
+    TestHelper testHelper = mock(TestHelper.class);
+    doThrow(new IllegalStateException("some argument")).when(testHelper).throwException();
+    Try.toCall(testHelper::thenCallMe)
+            .acceptException(Exception.class)
+            .thenCall((exception) -> testHelper.thenCallMe())
+            .acceptException(IllegalCallerException.class)
+            .thenCall((expectedException) -> testHelper.thenCallMe1())
+            .acceptException(IllegalStateException.class)
+            .thenRethrow((exception -> new Exception("new argument")))
+            .elseCall(testHelper::elseCallMe)
+            .finallyDone(testHelper::finallCallMe);
+    verify(testHelper).thenCallMe();
+    verify(testHelper).finallCallMe();
+    verify(testHelper).elseCallMe();
   }
 
   @Test
@@ -279,6 +360,10 @@ public class TryToCallTest {
 
   static class TestHelper {
     void thenCallMe() {
+      System.out.println("then call me");
+    }
+
+    void thenCallMe1() {
       System.out.println("then call me");
     }
 
