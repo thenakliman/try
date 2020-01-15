@@ -18,45 +18,47 @@ class TryToCall {
     this.callable = callable;
   }
 
-  <X extends Throwable> CodeWithThrowable acceptException(final Class<? extends X> exceptionClass) throws X {
-    return new CodeWithThrowable(this.callable, exceptionClass, emptyList());
+  <X extends Throwable> ThenHandler acceptException(final Class<? extends X> exceptionClass) throws X {
+    return new ThenHandler(this.callable, exceptionClass, emptyList());
   }
 
-  public static class CodeWithThrowable {
+  public static class ThenHandler {
     final private Callable callable;
     final private Class<? extends Throwable> exceptionClass;
-    final private List<Keeper> exceptionKeepers;
+    final private List<IExceptionHandler> exceptionsHandler;
 
-    public CodeWithThrowable(final Callable callable, final Class<? extends Throwable> exceptionClass, List<Keeper> exceptionKeepers) {
+    public ThenHandler(final Callable callable,
+                       final Class<? extends Throwable> exceptionClass,
+                       final List<IExceptionHandler> exceptionsHandler) {
       this.callable = callable;
       this.exceptionClass = exceptionClass;
-      this.exceptionKeepers = exceptionKeepers;
+      this.exceptionsHandler = exceptionsHandler;
     }
 
-    public IExceptionHandler thenCall(final Consumer<Throwable> thenConsumer) {
-      ArrayList<Keeper> exceptionKeepers = new ArrayList<>(this.exceptionKeepers);
-      exceptionKeepers.add(new ExceptionKeeper(this.exceptionClass, thenConsumer));
-      return new ExceptionHandler(this.callable, Collections.unmodifiableList(exceptionKeepers), DO_NOTHING);
+    public ITerminator thenCall(final Consumer<Throwable> thenConsumer) {
+      final ArrayList<IExceptionHandler> exceptionHandlers = new ArrayList<>(this.exceptionsHandler);
+      exceptionHandlers.add(new ExceptionConsumer(this.exceptionClass, thenConsumer));
+      return new Terminator(this.callable, Collections.unmodifiableList(exceptionHandlers), DO_NOTHING);
     }
 
-    public IExceptionHandler thenRethrow(final Function<Throwable, ? extends Throwable> exceptionFunction) {
-      ArrayList<Keeper> exceptionFKeepers = new ArrayList<>(this.exceptionKeepers);
-      exceptionFKeepers.add(new ExceptionFKeeper(this.exceptionClass, exceptionFunction));
-      return new RethrowExceptionHandler(this.callable, Collections.unmodifiableList(exceptionFKeepers), DO_NOTHING);
+    public ITerminator thenRethrow(final Function<Throwable, ? extends Throwable> exceptionFunction) {
+      final ArrayList<IExceptionHandler> IExceptionHandlers = new ArrayList<>(this.exceptionsHandler);
+      IExceptionHandlers.add(new ExceptionThrower(this.exceptionClass, exceptionFunction));
+      return new Terminator(this.callable, Collections.unmodifiableList(IExceptionHandlers), DO_NOTHING);
     }
   }
 
-  static interface Keeper {
-    String getType();
+  interface IExceptionHandler {
+    void handleException(Throwable exception);
 
-    public Class<? extends Throwable> getThrowableClass();
+    Class<? extends Throwable> getThrowableClass();
   }
 
-  static class ExceptionKeeper implements Keeper {
+  static class ExceptionConsumer implements IExceptionHandler {
     final private Class<? extends Throwable> throwableClass;
     final private Consumer<Throwable> consumer;
 
-    ExceptionKeeper(Class<? extends Throwable> throwableClass, Consumer<Throwable> consumer) {
+    ExceptionConsumer(Class<? extends Throwable> throwableClass, Consumer<Throwable> consumer) {
       this.throwableClass = throwableClass;
       this.consumer = consumer;
     }
@@ -65,21 +67,18 @@ class TryToCall {
       return throwableClass;
     }
 
-    public Consumer<Throwable> getConsumer() {
-      return consumer;
-    }
-
     @Override
-    public String getType() {
-      return "consumer";
+    public void handleException(Throwable exception) {
+      this.consumer.accept(exception);
     }
   }
 
-  static class ExceptionFKeeper implements Keeper {
+  static class ExceptionThrower implements IExceptionHandler {
     final private Class<? extends Throwable> throwableClass;
     final Function<Throwable, ? extends Throwable> exceptionFunction;
 
-    ExceptionFKeeper(final Class<? extends Throwable> throwableClass, final Function<Throwable, ? extends Throwable> exceptionFunction) {
+    ExceptionThrower(final Class<? extends Throwable> throwableClass,
+                     final Function<Throwable, ? extends Throwable> exceptionFunction) {
       this.throwableClass = throwableClass;
       this.exceptionFunction = exceptionFunction;
     }
@@ -88,100 +87,32 @@ class TryToCall {
       return throwableClass;
     }
 
-    public Function<Throwable, ? extends Throwable> getExceptionFunction() {
-      return this.exceptionFunction;
-    }
-
     @Override
-    public String getType() {
-      return "thrower";
+    public void handleException(final Throwable exception) {
+      sneakyThrow(exceptionFunction.apply(exception));
     }
   }
 
-  interface IExceptionHandler {
+  interface ITerminator {
     void done();
 
     void finallyDone(final Callable callable);
 
-    <X extends Throwable> CodeWithThrowable acceptException(final Class<? extends X> exceptionClass) throws X;
+    <X extends Throwable> ThenHandler acceptException(final Class<? extends X> exceptionClass) throws X;
 
-    IExceptionHandler elseCall(final Callable elseCallable);
+    ITerminator elseCall(final Callable elseCallable);
   }
 
-  public static class RethrowExceptionHandler implements IExceptionHandler {
+  public static class Terminator implements ITerminator {
     final private Callable callable;
-    final private Callable elseCallable;
-    final private List<Keeper> exceptionKeeper;
-
-    public RethrowExceptionHandler(final Callable callable, List<Keeper> exceptionKeeper, final Callable elseCallable) {
-      this.callable = callable;
-      this.elseCallable = elseCallable;
-      this.exceptionKeeper = exceptionKeeper;
-    }
-
-    @Override
-    public void done() {
-      try {
-        this.callable.call();
-      } catch (Throwable exception) {
-        Optional<Keeper> exceptionKeeperOptional = this.exceptionKeeper.stream()
-                .filter((exceptionKeeper -> exceptionKeeper.getThrowableClass().isInstance(exception)))
-                .findFirst();
-        if (exceptionKeeperOptional.isPresent() && "thrower".equals(exceptionKeeperOptional.get().getType())) {
-          sneakyThrow(((ExceptionFKeeper) exceptionKeeperOptional.get()).exceptionFunction.apply(exception));
-        } else if (exceptionKeeperOptional.isPresent() && "consumer".equals(exceptionKeeperOptional.get().getType())) {
-          ((ExceptionKeeper) exceptionKeeperOptional.get()).getConsumer().accept(exception);
-        } else {
-          throw exception;
-        }
-        this.elseCallable.call();
-      }
-    }
-
-    @Override
-    public void finallyDone(final Callable finallyCallable) {
-      boolean success = false;
-      try {
-        this.callable.call();
-        success = true;
-      } catch (Throwable exception) {
-        Optional<Keeper> exceptionKeeperOptional = this.exceptionKeeper.stream()
-                .filter((exceptionKeeper -> exceptionKeeper.getThrowableClass().isInstance(exception)))
-                .findFirst();
-        if (exceptionKeeperOptional.isPresent() && "thrower".equals(exceptionKeeperOptional.get().getType())) {
-          sneakyThrow(((ExceptionFKeeper) exceptionKeeperOptional.get()).exceptionFunction.apply(exception));
-        } else if (exceptionKeeperOptional.isPresent() && "consumer".equals(exceptionKeeperOptional.get().getType())) {
-          ((ExceptionKeeper) exceptionKeeperOptional.get()).getConsumer().accept(exception);
-        } else {
-          throw exception;
-        }
-      } finally {
-        finallyCallable.call();
-      }
-      if(success) {
-        this.elseCallable.call();
-      }
-    }
-
-    @Override
-    public <X extends Throwable> CodeWithThrowable acceptException(Class<? extends X> exceptionClass) throws X {
-      return new CodeWithThrowable(this.callable, exceptionClass, this.exceptionKeeper);
-    }
-
-    @Override
-    public IExceptionHandler elseCall(final Callable elseCallable) {
-      return new RethrowExceptionHandler(this.callable, this.exceptionKeeper, elseCallable);
-    }
-  }
-
-  public static class ExceptionHandler implements IExceptionHandler {
-    final private Callable callable;
-    final private List<Keeper> exceptionKeeper;
+    final private List<IExceptionHandler> exceptions;
     final private Callable elseCallable;
 
-    public ExceptionHandler(final Callable callable, final List<Keeper> exceptionKeeper, final Callable doNothing) {
+    public Terminator(final Callable callable,
+                      final List<IExceptionHandler> exceptions,
+                      final Callable doNothing) {
       this.callable = callable;
-      this.exceptionKeeper = exceptionKeeper;
+      this.exceptions = exceptions;
       this.elseCallable = doNothing;
     }
 
@@ -192,17 +123,14 @@ class TryToCall {
         this.callable.call();
         success = true;
       } catch (Throwable exception) {
-        Optional<Keeper> exceptionKeeperOptional = this.exceptionKeeper.stream()
-                .filter((exceptionKeeper -> exceptionKeeper.getThrowableClass().isInstance(exception)))
+        Optional<IExceptionHandler> matchedException = this.exceptions.stream()
+                .filter((exceptionHandler -> exceptionHandler.getThrowableClass().isInstance(exception)))
                 .findFirst();
-        if (exceptionKeeperOptional.isPresent() && "thrower".equals(exceptionKeeperOptional.get().getType())) {
-          ((ExceptionFKeeper) exceptionKeeperOptional.get()).exceptionFunction.apply(exception);
+
+        if (matchedException.isPresent()) {
+          matchedException.get().handleException(exception);
         } else {
-          if (exceptionKeeperOptional.isPresent() && "consumer".equals(exceptionKeeperOptional.get().getType())) {
-            ((ExceptionKeeper) exceptionKeeperOptional.get()).getConsumer().accept(exception);
-          } else {
-            throw exception;
-          }
+          throw exception;
         }
       }
 
@@ -218,17 +146,14 @@ class TryToCall {
         this.callable.call();
         success = true;
       } catch (Throwable exception) {
-        Optional<Keeper> exceptionKeeperOptional = this.exceptionKeeper.stream()
-                .filter((exceptionKeeper -> exceptionKeeper.getThrowableClass().isInstance(exception)))
+        Optional<IExceptionHandler> matchedException = this.exceptions.stream()
+                .filter((exceptionHandler -> exceptionHandler.getThrowableClass().isInstance(exception)))
                 .findFirst();
-        if (exceptionKeeperOptional.isPresent() && "thrower".equals(exceptionKeeperOptional.get().getType())) {
-          ((ExceptionFKeeper) exceptionKeeperOptional.get()).exceptionFunction.apply(exception);
+
+        if (matchedException.isPresent()) {
+          matchedException.get().handleException(exception);
         } else {
-          if (exceptionKeeperOptional.isPresent() && "consumer".equals(exceptionKeeperOptional.get().getType())) {
-            ((ExceptionKeeper) exceptionKeeperOptional.get()).getConsumer().accept(exception);
-          } else {
-            throw exception;
-          }
+          throw exception;
         }
       } finally {
         finallyCallable.call();
@@ -240,13 +165,13 @@ class TryToCall {
     }
 
     @Override
-    public <X extends Throwable> CodeWithThrowable acceptException(Class<? extends X> exceptionClass) throws X {
-      return new CodeWithThrowable(this.callable, exceptionClass, this.exceptionKeeper);
+    public <X extends Throwable> ThenHandler acceptException(final Class<? extends X> exceptionClass) throws X {
+      return new ThenHandler(this.callable, exceptionClass, this.exceptions);
     }
 
     @Override
-    public IExceptionHandler elseCall(final Callable elseCallable) {
-      return new ExceptionHandler(this.callable, this.exceptionKeeper, elseCallable);
+    public ITerminator elseCall(final Callable elseCallable) {
+      return new Terminator(this.callable, this.exceptions, elseCallable);
     }
   }
 }

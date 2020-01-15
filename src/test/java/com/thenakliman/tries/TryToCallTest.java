@@ -310,6 +310,7 @@ public class TryToCallTest {
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
               .elseCall(testHelper::elseCallMe)
               .done();
+      fail("IllegalArgumentException expected but did not raise");
     } catch (IllegalArgumentException exception) {
       assertThat(exception.getMessage(), is("some argument some value"));
     }
