@@ -35,16 +35,16 @@ class TryToCall {
       this.exceptionsHandler = exceptionsHandler;
     }
 
-    public ITerminator thenCall(final Consumer<Throwable> thenConsumer) {
-      final ArrayList<IExceptionHandler> exceptionHandlers = new ArrayList<>(this.exceptionsHandler);
+    public Executor thenCall(final Consumer<Throwable> thenConsumer) {
+      final List<IExceptionHandler> exceptionHandlers = new ArrayList<>(this.exceptionsHandler);
       exceptionHandlers.add(new ExceptionConsumer(this.exceptionClass, thenConsumer));
-      return new Terminator(this.callable, Collections.unmodifiableList(exceptionHandlers), DO_NOTHING);
+      return new Executor(this.callable, Collections.unmodifiableList(exceptionHandlers), DO_NOTHING);
     }
 
-    public ITerminator thenRethrow(final Function<Throwable, ? extends Throwable> exceptionFunction) {
-      final ArrayList<IExceptionHandler> IExceptionHandlers = new ArrayList<>(this.exceptionsHandler);
-      IExceptionHandlers.add(new ExceptionThrower(this.exceptionClass, exceptionFunction));
-      return new Terminator(this.callable, Collections.unmodifiableList(IExceptionHandlers), DO_NOTHING);
+    public Executor thenRethrow(final Function<Throwable, ? extends Throwable> exceptionFunction) {
+      final List<IExceptionHandler> exceptionHandlers = new ArrayList<>(this.exceptionsHandler);
+      exceptionHandlers.add(new ExceptionThrower(this.exceptionClass, exceptionFunction));
+      return new Executor(this.callable, Collections.unmodifiableList(exceptionHandlers), DO_NOTHING);
     }
   }
 
@@ -93,30 +93,19 @@ class TryToCall {
     }
   }
 
-  interface ITerminator {
-    void done();
-
-    void finallyDone(final Callable callable);
-
-    <X extends Throwable> ThenHandler acceptException(final Class<? extends X> exceptionClass) throws X;
-
-    ITerminator elseCall(final Callable elseCallable);
-  }
-
-  public static class Terminator implements ITerminator {
+  public static class Executor {
     final private Callable callable;
     final private List<IExceptionHandler> exceptions;
     final private Callable elseCallable;
 
-    public Terminator(final Callable callable,
-                      final List<IExceptionHandler> exceptions,
-                      final Callable doNothing) {
+    public Executor(final Callable callable,
+                    final List<IExceptionHandler> exceptions,
+                    final Callable doNothing) {
       this.callable = callable;
       this.exceptions = exceptions;
       this.elseCallable = doNothing;
     }
 
-    @Override
     public void done() {
       boolean success = false;
       try {
@@ -139,7 +128,6 @@ class TryToCall {
       }
     }
 
-    @Override
     public void finallyDone(final Callable finallyCallable) {
       boolean success = false;
       try {
@@ -164,14 +152,12 @@ class TryToCall {
       }
     }
 
-    @Override
     public <X extends Throwable> ThenHandler acceptException(final Class<? extends X> exceptionClass) throws X {
       return new ThenHandler(this.callable, exceptionClass, this.exceptions);
     }
 
-    @Override
-    public ITerminator elseCall(final Callable elseCallable) {
-      return new Terminator(this.callable, this.exceptions, elseCallable);
+    public Executor elseCall(final Callable elseCallable) {
+      return new Executor(this.callable, this.exceptions, elseCallable);
     }
   }
 }
