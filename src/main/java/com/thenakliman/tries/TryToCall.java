@@ -1,15 +1,17 @@
 package com.thenakliman.tries;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.thenakliman.tries.Constant.DO_NOTHING;
 import static com.thenakliman.tries.SneakyThrower.sneakyThrow;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 
 class TryToCall {
   final private Callable callable;
@@ -19,31 +21,47 @@ class TryToCall {
   }
 
   <X extends Throwable> ThenHandler acceptException(final Class<? extends X> exceptionClass) throws X {
-    return new ThenHandler(this.callable, exceptionClass, emptyList());
+    return new ThenHandler(this.callable, singletonList(exceptionClass), emptyList());
+  }
+
+  <X extends Throwable, Y extends Throwable> ThenHandler acceptException(final Class<? extends X> exceptionClass1,
+                                                    final Class<? extends Y> exceptionClass2) throws X, Y {
+    return new ThenHandler(this.callable, Arrays.asList(exceptionClass1, exceptionClass2), emptyList());
+  }
+
+  <X extends Throwable> ThenHandler acceptException(final Class<? extends X> exceptionClass1,
+                                                    final Class<? extends X> exceptionClass2,
+                                                    final Class<? extends X> exceptionClass3) throws X {
+
+    return new ThenHandler(this.callable, Arrays.asList(exceptionClass1, exceptionClass2, exceptionClass3), emptyList());
   }
 
   public static class ThenHandler {
     final private Callable callable;
-    final private Class<? extends Throwable> exceptionClass;
-    final private List<IExceptionHandler> exceptionsHandler;
+    final private List<Class<? extends Throwable>> exceptionClasses;
+    final private List<IExceptionHandler> exceptionsHandlers;
 
     public ThenHandler(final Callable callable,
-                       final Class<? extends Throwable> exceptionClass,
-                       final List<IExceptionHandler> exceptionsHandler) {
+                       final List<Class<? extends Throwable>> exceptionClasses,
+                       final List<IExceptionHandler> exceptionsHandlers) {
       this.callable = callable;
-      this.exceptionClass = exceptionClass;
-      this.exceptionsHandler = exceptionsHandler;
+      this.exceptionClasses = exceptionClasses;
+      this.exceptionsHandlers = exceptionsHandlers;
     }
 
     public Executor thenCall(final Consumer<Throwable> thenConsumer) {
-      final List<IExceptionHandler> exceptionHandlers = new ArrayList<>(this.exceptionsHandler);
-      exceptionHandlers.add(new ExceptionConsumer(this.exceptionClass, thenConsumer));
+      final List<IExceptionHandler> exceptionHandlers = this.exceptionClasses.stream()
+              .map(exceptionClass -> new ExceptionConsumer(exceptionClass, thenConsumer))
+              .collect(Collectors.toList());
+      exceptionHandlers.addAll(this.exceptionsHandlers);
       return new Executor(this.callable, Collections.unmodifiableList(exceptionHandlers), DO_NOTHING);
     }
 
     public Executor thenRethrow(final Function<Throwable, ? extends Throwable> exceptionFunction) {
-      final List<IExceptionHandler> exceptionHandlers = new ArrayList<>(this.exceptionsHandler);
-      exceptionHandlers.add(new ExceptionThrower(this.exceptionClass, exceptionFunction));
+      final List<IExceptionHandler> exceptionHandlers = this.exceptionClasses.stream()
+              .map(exceptionClass -> new ExceptionThrower(exceptionClass, exceptionFunction))
+              .collect(Collectors.toList());
+      exceptionHandlers.addAll(this.exceptionsHandlers);
       return new Executor(this.callable, Collections.unmodifiableList(exceptionHandlers), DO_NOTHING);
     }
   }
@@ -153,7 +171,21 @@ class TryToCall {
     }
 
     public <X extends Throwable> ThenHandler acceptException(final Class<? extends X> exceptionClass) throws X {
-      return new ThenHandler(this.callable, exceptionClass, this.exceptions);
+      return new ThenHandler(this.callable, singletonList(exceptionClass), this.exceptions);
+    }
+
+    public <X extends Throwable> ThenHandler acceptException(final Class<? extends X> exceptionClass1,
+                                                             final Class<? extends X> exceptionClass2,
+                                                             final Class<? extends X> exceptionClass3) throws X {
+      return new ThenHandler(
+              this.callable,
+              Arrays.asList(exceptionClass1, exceptionClass2, exceptionClass3),
+              this.exceptions);
+    }
+
+    public <X extends Throwable> ThenHandler acceptException(final Class<? extends X> exceptionClass1,
+                                                             final Class<? extends X> exceptionClass2) throws X {
+      return new ThenHandler(this.callable, Arrays.asList(exceptionClass1, exceptionClass2), this.exceptions);
     }
 
     public Executor elseCall(final Callable elseCallable) {
