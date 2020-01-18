@@ -37,25 +37,17 @@ class TryToGet<T> {
       this.exceptionHandlers = exceptionHandlers;
     }
 
-    public IExecutor<T> thenGet(final Function<Throwable, T> getterFromException) {
+    public Executor<T> thenGet(final Function<Throwable, T> getterFromException) {
       final List<IExceptionHandler<T>> registeredExceptionHandlers = new ArrayList<>(this.exceptionHandlers);
       registeredExceptionHandlers.add(new ExceptionConsumer<>(this.exceptionClass, getterFromException));
       return new Executor<T>(this.valueSupplier, exceptionClass, registeredExceptionHandlers, DO_NOTHING_CONSUMER);
     }
 
-    public IExecutor<T> thenRethrow(final Function<Throwable, ? extends Throwable> exceptionGetter) {
+    public Executor<T> thenRethrow(final Function<Throwable, ? extends Throwable> exceptionGetter) {
       final List<IExceptionHandler<T>> registeredExceptionHandlers = new ArrayList<>(this.exceptionHandlers);
       registeredExceptionHandlers.add(new ExceptionThrower<>(this.exceptionClass, exceptionGetter));
       return new Executor<>(this.valueSupplier, exceptionClass, registeredExceptionHandlers, DO_NOTHING_CONSUMER);
     }
-  }
-
-  interface IExecutor<T> {
-    T done();
-
-    T finallyDone(final Callable callable);
-
-    IExecutor<T> elseCall(final Consumer<T> consumer);
   }
 
   interface IExceptionHandler<T> {
@@ -105,7 +97,7 @@ class TryToGet<T> {
     }
   }
 
-  public static class Executor<T> implements IExecutor<T> {
+  public static class Executor<T> {
     final private Supplier<T> valueSupplier;
     final private Class<? extends Throwable> exceptionClass;
     final private List<IExceptionHandler<T>> exceptionHandlers;
@@ -122,7 +114,6 @@ class TryToGet<T> {
       this.elseConsumer = elseConsumer;
     }
 
-    @Override
     public T done() {
       final T value;
       try {
@@ -141,7 +132,6 @@ class TryToGet<T> {
       return value;
     }
 
-    @Override
     public T finallyDone(final Callable finallyCallable) {
       final T value;
       try {
@@ -163,8 +153,7 @@ class TryToGet<T> {
       return value;
     }
 
-    @Override
-    public IExecutor<T> elseCall(final Consumer<T> elseConsumer) {
+    public Executor<T> elseCall(final Consumer<T> elseConsumer) {
       return new Executor<>(
               this.valueSupplier,
               this.exceptionClass,
