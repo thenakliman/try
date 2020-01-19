@@ -18,18 +18,18 @@ class TryToCall {
     this.callable = callable;
   }
 
-  <X extends Throwable> ThenHandler acceptException(final Class<? extends X> exceptionClass) throws X {
+  <X extends Throwable> ThenHandler ifRaises(final Class<? extends X> exceptionClass) throws X {
     return new ThenHandler(this.callable, singletonList(exceptionClass), emptyList());
   }
 
-  <X extends Throwable, Y extends Throwable> ThenHandler acceptException(final Class<? extends X> exceptionClass1,
-                                                                         final Class<? extends Y> exceptionClass2) throws X, Y {
+  <X extends Throwable, Y extends Throwable> ThenHandler ifRaises(final Class<? extends X> exceptionClass1,
+                                                                  final Class<? extends Y> exceptionClass2) throws X, Y {
     return new ThenHandler(this.callable, Arrays.asList(exceptionClass1, exceptionClass2), emptyList());
   }
 
-  <X extends Throwable, Y extends Throwable, Z extends Throwable> ThenHandler acceptException(final Class<? extends X> exceptionClass1,
-                                                                                              final Class<? extends Y> exceptionClass2,
-                                                                                              final Class<? extends Z> exceptionClass3) throws X, Y, Z {
+  <X extends Throwable, Y extends Throwable, Z extends Throwable> ThenHandler ifRaises(final Class<? extends X> exceptionClass1,
+                                                                                       final Class<? extends Y> exceptionClass2,
+                                                                                       final Class<? extends Z> exceptionClass3) throws X, Y, Z {
 
     return new ThenHandler(this.callable, Arrays.asList(exceptionClass1, exceptionClass2, exceptionClass3), emptyList());
   }
@@ -177,21 +177,21 @@ class TryToCall {
       }
     }
 
-    public <X extends Throwable> ThenHandler acceptException(final Class<? extends X> exceptionClass) throws X {
+    public <X extends Throwable> ThenHandler elseIfRaises(final Class<? extends X> exceptionClass) throws X {
       return new ThenHandler(this.callable, singletonList(exceptionClass), this.exceptions);
     }
 
-    public <X extends Throwable> ThenHandler acceptException(final Class<? extends X> exceptionClass1,
-                                                             final Class<? extends X> exceptionClass2,
-                                                             final Class<? extends X> exceptionClass3) throws X {
+    public <X extends Throwable> ThenHandler elseIfRaises(final Class<? extends X> exceptionClass1,
+                                                          final Class<? extends X> exceptionClass2,
+                                                          final Class<? extends X> exceptionClass3) throws X {
       return new ThenHandler(
               this.callable,
               Arrays.asList(exceptionClass1, exceptionClass2, exceptionClass3),
               this.exceptions);
     }
 
-    public <X extends Throwable> ThenHandler acceptException(final Class<? extends X> exceptionClass1,
-                                                             final Class<? extends X> exceptionClass2) throws X {
+    public <X extends Throwable> ThenHandler elseIfRaises(final Class<? extends X> exceptionClass1,
+                                                          final Class<? extends X> exceptionClass2) throws X {
       return new ThenHandler(this.callable, Arrays.asList(exceptionClass1, exceptionClass2), this.exceptions);
     }
 

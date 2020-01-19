@@ -19,7 +19,7 @@ public class TryToGetTest {
   @Test
   public void try_toGetThenGet_returnGetValue_whenExceptionIsNotRaised() {
     Integer done = Try.toGet(() -> 10)
-            .acceptException(RuntimeException.class)
+            .ifRaise(RuntimeException.class)
             .thenGet((exception) -> 20)
             .done();
     assertThat(done, is(10));
@@ -29,7 +29,7 @@ public class TryToGetTest {
   public void try_toGetThenGetElseCall_returnGetValueElseCalled_whenExceptionIsNotRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     Integer expValue = Try.toGet(() -> 10)
-            .acceptException(RuntimeException.class)
+            .ifRaise(RuntimeException.class)
             .thenGet((exception) -> 20)
             .elseCall((value) -> testHelper.elseCallMe())
             .done();
@@ -41,7 +41,7 @@ public class TryToGetTest {
   public void try_toGetThenGetFinallyDone_returnGetValueFinallyCalled_whenExceptionIsNotRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     Integer done = Try.toGet(() -> 10)
-            .acceptException(RuntimeException.class)
+            .ifRaise(RuntimeException.class)
             .thenGet((exception) -> 20)
             .finallyDone(testHelper::finallCallMe);
     assertThat(done, is(10));
@@ -52,7 +52,7 @@ public class TryToGetTest {
   public void try_toGetThenGetElseCallFinallyDone_returnGetValueFinallyCalledElseCalled_whenExceptionIsNotRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     Integer done = Try.toGet(() -> 10)
-            .acceptException(RuntimeException.class)
+            .ifRaise(RuntimeException.class)
             .thenGet((exception) -> 20)
             .elseCall((value) -> testHelper.elseCallMe())
             .finallyDone(testHelper::finallCallMe);
@@ -71,7 +71,7 @@ public class TryToGetTest {
     };
 
     Integer done = Try.toGet(supplier)
-            .acceptException(RuntimeException.class)
+            .ifRaise(RuntimeException.class)
             .thenGet((exception) -> 20)
             .done();
     assertThat(done, is(20));
@@ -88,7 +88,7 @@ public class TryToGetTest {
 
     TestHelper testHelper = mock(TestHelper.class);
     Integer done = Try.toGet(supplier)
-            .acceptException(RuntimeException.class)
+            .ifRaise(RuntimeException.class)
             .thenGet((exception) -> 20)
             .elseCall((value) -> testHelper.elseCallMe())
             .done();
@@ -107,7 +107,7 @@ public class TryToGetTest {
 
     TestHelper testHelper = mock(TestHelper.class);
     Integer done = Try.toGet(supplier)
-            .acceptException(RuntimeException.class)
+            .ifRaise(RuntimeException.class)
             .thenGet((exception) -> 20)
             .finallyDone(testHelper::finallCallMe);
     assertThat(done, is(20));
@@ -125,7 +125,7 @@ public class TryToGetTest {
 
     TestHelper testHelper = mock(TestHelper.class);
     Integer done = Try.toGet(supplier)
-            .acceptException(RuntimeException.class)
+            .ifRaise(RuntimeException.class)
             .thenGet((exception) -> 20)
             .elseCall(value -> testHelper.elseCallMe())
             .finallyDone(testHelper::finallCallMe);
@@ -137,7 +137,7 @@ public class TryToGetTest {
   @Test
   public void try_toGetThenRethrow_returnGetValue_whenExceptionIsNotRaised() {
     Integer done = Try.toGet(() -> 10)
-            .acceptException(RuntimeException.class)
+            .ifRaise(RuntimeException.class)
             .thenRethrow((exception) -> new IllegalArgumentException(""))
             .done();
     assertThat(done, is(10));
@@ -147,7 +147,7 @@ public class TryToGetTest {
   public void try_toGetThenRethrowFinallyDone_returnGetValueFinallyCalled_whenExceptionIsNotRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     Integer done = Try.toGet(() -> 10)
-            .acceptException(RuntimeException.class)
+            .ifRaise(RuntimeException.class)
             .thenRethrow((exception) -> new IllegalArgumentException(""))
             .finallyDone(testHelper::finallCallMe);
 
@@ -167,7 +167,7 @@ public class TryToGetTest {
     expectedException.expect(RuntimeException.class);
     expectedException.expectMessage("illegal run time");
     Try.toGet(supplier)
-            .acceptException(RuntimeException.class)
+            .ifRaise(RuntimeException.class)
             .thenRethrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
             .done();
   }
@@ -184,7 +184,7 @@ public class TryToGetTest {
     TestHelper testHelper = mock(TestHelper.class);
     try {
       Try.toGet(supplier)
-              .acceptException(RuntimeException.class)
+              .ifRaise(RuntimeException.class)
               .thenRethrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
               .finallyDone(testHelper::finallCallMe);
       fail("Expected RuntimeException.");

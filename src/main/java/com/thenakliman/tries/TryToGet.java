@@ -18,7 +18,7 @@ class TryToGet<T> {
     this.valueSupplier = valueSupplier;
   }
 
-  <X extends Throwable> ThenHandler<T> acceptException(final Class<? extends X> exceptionClass) throws X {
+  <X extends Throwable> ThenHandler<T> ifRaise(final Class<? extends X> exceptionClass) throws X {
     return new ThenHandler<>(valueSupplier, exceptionClass, emptyList());
   }
 

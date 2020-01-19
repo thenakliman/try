@@ -30,7 +30,7 @@ public class TryToCallTest {
     TestHelper testHelper = mock(TestHelper.class);
 
     Try.toCall(testHelper::thenCallMe)
-            .acceptException(RuntimeException.class)
+            .ifRaises(RuntimeException.class)
             .thenCall((exception) -> testHelper.throwException())
             .done();
 
@@ -43,7 +43,7 @@ public class TryToCallTest {
     TestHelper testHelper = mock(TestHelper.class);
 
     Try.toCall(testHelper::thenCallMe)
-            .acceptException(IllegalArgumentException.class, IllegalAccessError.class)
+            .ifRaises(IllegalArgumentException.class, IllegalAccessError.class)
             .thenCall((exception) -> testHelper.throwException())
             .done();
 
@@ -56,7 +56,7 @@ public class TryToCallTest {
     TestHelper testHelper = mock(TestHelper.class);
 
     Try.toCall(testHelper::thenCallMe)
-            .acceptException(IllegalArgumentException.class, IllegalAccessError.class, IllegalSelectorException.class)
+            .ifRaises(IllegalArgumentException.class, IllegalAccessError.class, IllegalSelectorException.class)
             .thenCall((exception) -> testHelper.throwException())
             .done();
 
@@ -69,7 +69,7 @@ public class TryToCallTest {
     TestHelper testHelper = mock(TestHelper.class);
 
     Try.toCall(testHelper::thenCallMe)
-            .acceptException(RuntimeException.class)
+            .ifRaises(RuntimeException.class)
             .thenCall((exception) -> testHelper.throwException())
             .elseCall(testHelper::elseCallMe)
             .done();
@@ -84,7 +84,7 @@ public class TryToCallTest {
     TestHelper testHelper = mock(TestHelper.class);
 
     Try.toCall(testHelper::thenCallMe)
-            .acceptException(IllegalAccessError.class, IllegalArgumentException.class)
+            .ifRaises(IllegalAccessError.class, IllegalArgumentException.class)
             .thenCall((exception) -> testHelper.throwException())
             .elseCall(testHelper::elseCallMe)
             .done();
@@ -99,7 +99,7 @@ public class TryToCallTest {
     TestHelper testHelper = mock(TestHelper.class);
 
     Try.toCall(testHelper::thenCallMe)
-            .acceptException(IllegalAccessError.class, IllegalArgumentException.class, IllegalSelectorException.class)
+            .ifRaises(IllegalAccessError.class, IllegalArgumentException.class, IllegalSelectorException.class)
             .thenCall((exception) -> testHelper.throwException())
             .elseCall(testHelper::elseCallMe)
             .done();
@@ -114,7 +114,7 @@ public class TryToCallTest {
     TestHelper testHelper = mock(TestHelper.class);
 
     Try.toCall(testHelper::thenCallMe)
-            .acceptException(RuntimeException.class)
+            .ifRaises(RuntimeException.class)
             .thenCall((exception) -> testHelper.throwException())
             .finallyDone(testHelper::finallCallMe);
 
@@ -128,7 +128,7 @@ public class TryToCallTest {
     TestHelper testHelper = mock(TestHelper.class);
 
     Try.toCall(testHelper::thenCallMe)
-            .acceptException(IllegalArgumentException.class, IllegalMonitorStateException.class)
+            .ifRaises(IllegalArgumentException.class, IllegalMonitorStateException.class)
             .thenCall((exception) -> testHelper.throwException())
             .finallyDone(testHelper::finallCallMe);
 
@@ -142,7 +142,7 @@ public class TryToCallTest {
     TestHelper testHelper = mock(TestHelper.class);
 
     Try.toCall(testHelper::thenCallMe)
-            .acceptException(IllegalArgumentException.class, IllegalMonitorStateException.class, IllegalSelectorException.class)
+            .ifRaises(IllegalArgumentException.class, IllegalMonitorStateException.class, IllegalSelectorException.class)
             .thenCall((exception) -> testHelper.throwException())
             .finallyDone(testHelper::finallCallMe);
 
@@ -156,7 +156,7 @@ public class TryToCallTest {
     TestHelper testHelper = mock(TestHelper.class);
 
     Try.toCall(testHelper::thenCallMe)
-            .acceptException(RuntimeException.class)
+            .ifRaises(RuntimeException.class)
             .thenCall((exception) -> testHelper.throwException())
             .elseCall(testHelper::elseCallMe)
             .finallyDone(testHelper::finallCallMe);
@@ -172,7 +172,7 @@ public class TryToCallTest {
     TestHelper testHelper = mock(TestHelper.class);
 
     Try.toCall(testHelper::thenCallMe)
-            .acceptException(IllegalMonitorStateException.class, IllegalCallerException.class)
+            .ifRaises(IllegalMonitorStateException.class, IllegalCallerException.class)
             .thenCall((exception) -> testHelper.throwException())
             .elseCall(testHelper::elseCallMe)
             .finallyDone(testHelper::finallCallMe);
@@ -188,7 +188,7 @@ public class TryToCallTest {
     TestHelper testHelper = mock(TestHelper.class);
 
     Try.toCall(testHelper::thenCallMe)
-            .acceptException(IllegalMonitorStateException.class, IllegalCallerException.class, IllegalSelectorException.class)
+            .ifRaises(IllegalMonitorStateException.class, IllegalCallerException.class, IllegalSelectorException.class)
             .thenCall((exception) -> testHelper.throwException())
             .elseCall(testHelper::elseCallMe)
             .finallyDone(testHelper::finallCallMe);
@@ -205,7 +205,7 @@ public class TryToCallTest {
     doThrow(new IllegalArgumentException("some argument")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class)
+            .ifRaises(IllegalArgumentException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
             .done();
 
@@ -219,7 +219,7 @@ public class TryToCallTest {
     doThrow(new IllegalArgumentException("some argument")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class, IllegalCallerException.class)
+            .ifRaises(IllegalArgumentException.class, IllegalCallerException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
             .done();
 
@@ -233,7 +233,7 @@ public class TryToCallTest {
     doThrow(new IllegalArgumentException("some argument")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class, IllegalCallerException.class, IllegalSelectorException.class)
+            .ifRaises(IllegalArgumentException.class, IllegalCallerException.class, IllegalSelectorException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
             .done();
 
@@ -247,7 +247,7 @@ public class TryToCallTest {
     doThrow(new IllegalCallerException("some argument")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class, IllegalCallerException.class, IllegalSelectorException.class)
+            .ifRaises(IllegalArgumentException.class, IllegalCallerException.class, IllegalSelectorException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
             .done();
 
@@ -261,7 +261,7 @@ public class TryToCallTest {
     doThrow(new IllegalCharsetNameException("some argument")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class, IllegalCallerException.class, IllegalCharsetNameException.class)
+            .ifRaises(IllegalArgumentException.class, IllegalCallerException.class, IllegalCharsetNameException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
             .done();
 
@@ -275,7 +275,7 @@ public class TryToCallTest {
     doThrow(new IllegalArgumentException("some argument")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class)
+            .ifRaises(IllegalArgumentException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
             .elseCall(testHelper::elseCallMe)
             .done();
@@ -291,7 +291,7 @@ public class TryToCallTest {
     doThrow(new IllegalArgumentException("some argument")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class, IllegalCallerException.class)
+            .ifRaises(IllegalArgumentException.class, IllegalCallerException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
             .elseCall(testHelper::elseCallMe)
             .done();
@@ -307,7 +307,7 @@ public class TryToCallTest {
     doThrow(new IllegalArgumentException("some argument")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class, IllegalCallerException.class, IllegalCharsetNameException.class)
+            .ifRaises(IllegalArgumentException.class, IllegalCallerException.class, IllegalCharsetNameException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
             .elseCall(testHelper::elseCallMe)
             .done();
@@ -323,7 +323,7 @@ public class TryToCallTest {
     doThrow(new IllegalCallerException("some argument")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class, IllegalCallerException.class)
+            .ifRaises(IllegalArgumentException.class, IllegalCallerException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
             .elseCall(testHelper::elseCallMe)
             .done();
@@ -339,7 +339,7 @@ public class TryToCallTest {
     doThrow(new IllegalCallerException("some argument")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class, IllegalCallerException.class, IllegalCharsetNameException.class)
+            .ifRaises(IllegalArgumentException.class, IllegalCallerException.class, IllegalCharsetNameException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
             .elseCall(testHelper::elseCallMe)
             .done();
@@ -355,7 +355,7 @@ public class TryToCallTest {
     doThrow(new IllegalCharsetNameException("some argument")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class, IllegalCallerException.class, IllegalCharsetNameException.class)
+            .ifRaises(IllegalArgumentException.class, IllegalCallerException.class, IllegalCharsetNameException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
             .elseCall(testHelper::elseCallMe)
             .done();
@@ -371,7 +371,7 @@ public class TryToCallTest {
     doThrow(new IllegalArgumentException("some argument")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class)
+            .ifRaises(IllegalArgumentException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
             .finallyDone(testHelper::finallCallMe);
 
@@ -386,7 +386,7 @@ public class TryToCallTest {
     doThrow(new IllegalArgumentException("some argument")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class, IllegalCallerException.class)
+            .ifRaises(IllegalArgumentException.class, IllegalCallerException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
             .finallyDone(testHelper::finallCallMe);
 
@@ -401,7 +401,7 @@ public class TryToCallTest {
     doThrow(new IllegalArgumentException("some argument")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class, IllegalCallerException.class, IllegalCharsetNameException.class)
+            .ifRaises(IllegalArgumentException.class, IllegalCallerException.class, IllegalCharsetNameException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
             .finallyDone(testHelper::finallCallMe);
 
@@ -416,7 +416,7 @@ public class TryToCallTest {
     doThrow(new IllegalCallerException("some argument")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class, IllegalCallerException.class)
+            .ifRaises(IllegalArgumentException.class, IllegalCallerException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
             .finallyDone(testHelper::finallCallMe);
 
@@ -431,7 +431,7 @@ public class TryToCallTest {
     doThrow(new IllegalCallerException("some argument")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class, IllegalCallerException.class, IllegalCharsetNameException.class)
+            .ifRaises(IllegalArgumentException.class, IllegalCallerException.class, IllegalCharsetNameException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
             .finallyDone(testHelper::finallCallMe);
 
@@ -446,7 +446,7 @@ public class TryToCallTest {
     doThrow(new IllegalCharsetNameException("some argument")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class, IllegalCallerException.class, IllegalCharsetNameException.class)
+            .ifRaises(IllegalArgumentException.class, IllegalCallerException.class, IllegalCharsetNameException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
             .finallyDone(testHelper::finallCallMe);
 
@@ -461,12 +461,12 @@ public class TryToCallTest {
     doThrow(new IllegalArgumentException("some argument")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class)
+            .ifRaises(IllegalArgumentException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
-            .acceptException(IllegalCallerException.class)
+            .elseIfRaises(IllegalCallerException.class)
             .thenCall((expectedException) -> {
             })
-            .acceptException(RuntimeException.class)
+            .elseIfRaises(RuntimeException.class)
             .thenRethrow((exception -> new RuntimeException()))
             .elseCall(testHelper::elseCallMe)
             .finallyDone(testHelper::finallCallMe);
@@ -483,12 +483,12 @@ public class TryToCallTest {
     doThrow(new IllegalArgumentException("some argument")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class, IllegalCallerException.class)
+            .ifRaises(IllegalArgumentException.class, IllegalCallerException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
-            .acceptException(IllegalCallerException.class)
+            .elseIfRaises(IllegalCallerException.class)
             .thenCall((expectedException) -> {
             })
-            .acceptException(RuntimeException.class)
+            .elseIfRaises(RuntimeException.class)
             .thenRethrow((exception -> new RuntimeException()))
             .elseCall(testHelper::elseCallMe)
             .finallyDone(testHelper::finallCallMe);
@@ -505,12 +505,12 @@ public class TryToCallTest {
     doThrow(new IllegalArgumentException("some argument")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class, IllegalCallerException.class, IllegalStateException.class)
+            .ifRaises(IllegalArgumentException.class, IllegalCallerException.class, IllegalStateException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
-            .acceptException(IllegalCallerException.class)
+            .elseIfRaises(IllegalCallerException.class)
             .thenCall((expectedException) -> {
             })
-            .acceptException(RuntimeException.class)
+            .elseIfRaises(RuntimeException.class)
             .thenRethrow((exception -> new RuntimeException()))
             .elseCall(testHelper::elseCallMe)
             .finallyDone(testHelper::finallCallMe);
@@ -527,12 +527,12 @@ public class TryToCallTest {
     doThrow(new IllegalCallerException("some argument")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class, IllegalCallerException.class)
+            .ifRaises(IllegalArgumentException.class, IllegalCallerException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
-            .acceptException(IllegalStateException.class)
+            .elseIfRaises(IllegalStateException.class)
             .thenCall((expectedException) -> {
             })
-            .acceptException(RuntimeException.class)
+            .elseIfRaises(RuntimeException.class)
             .thenRethrow((exception -> new RuntimeException()))
             .elseCall(testHelper::elseCallMe)
             .finallyDone(testHelper::finallCallMe);
@@ -549,12 +549,12 @@ public class TryToCallTest {
     doThrow(new IllegalStateException("some argument")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class, IllegalCallerException.class, IllegalStateException.class)
+            .ifRaises(IllegalArgumentException.class, IllegalCallerException.class, IllegalStateException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
-            .acceptException(IllegalMonitorStateException.class)
+            .elseIfRaises(IllegalMonitorStateException.class)
             .thenCall((expectedException) -> {
             })
-            .acceptException(RuntimeException.class)
+            .elseIfRaises(RuntimeException.class)
             .thenRethrow((exception -> new RuntimeException()))
             .elseCall(testHelper::elseCallMe)
             .finallyDone(testHelper::finallCallMe);
@@ -571,11 +571,11 @@ public class TryToCallTest {
     doThrow(new IllegalCallerException("some argument")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class)
+            .ifRaises(IllegalArgumentException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
-            .acceptException(IllegalCallerException.class)
+            .elseIfRaises(IllegalCallerException.class)
             .thenCall((expectedException) -> testHelper.thenCallMe1())
-            .acceptException(RuntimeException.class)
+            .elseIfRaises(RuntimeException.class)
             .thenRethrow((exception -> new RuntimeException()))
             .elseCall(testHelper::elseCallMe)
             .finallyDone(testHelper::finallCallMe);
@@ -592,11 +592,11 @@ public class TryToCallTest {
     doThrow(new IllegalCallerException("some argument")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class, IllegalMonitorStateException.class)
+            .ifRaises(IllegalArgumentException.class, IllegalMonitorStateException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
-            .acceptException(IllegalCallerException.class)
+            .elseIfRaises(IllegalCallerException.class)
             .thenCall((expectedException) -> testHelper.thenCallMe1())
-            .acceptException(RuntimeException.class, IllegalCharsetNameException.class)
+            .elseIfRaises(RuntimeException.class, IllegalCharsetNameException.class)
             .thenRethrow((exception -> new RuntimeException()))
             .elseCall(testHelper::elseCallMe)
             .finallyDone(testHelper::finallCallMe);
@@ -613,11 +613,11 @@ public class TryToCallTest {
     doThrow(new IllegalCallerException("some argument")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class, IllegalMonitorStateException.class, IllegalStateException.class)
+            .ifRaises(IllegalArgumentException.class, IllegalMonitorStateException.class, IllegalStateException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
-            .acceptException(IllegalCallerException.class)
+            .elseIfRaises(IllegalCallerException.class)
             .thenCall((expectedException) -> testHelper.thenCallMe1())
-            .acceptException(RuntimeException.class, IllegalCharsetNameException.class)
+            .elseIfRaises(RuntimeException.class, IllegalCharsetNameException.class)
             .thenRethrow((exception -> new RuntimeException()))
             .elseCall(testHelper::elseCallMe)
             .finallyDone(testHelper::finallCallMe);
@@ -634,11 +634,11 @@ public class TryToCallTest {
     doThrow(new IllegalFormatPrecisionException(1)).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalPathStateException.class, IllegalMonitorStateException.class)
+            .ifRaises(IllegalPathStateException.class, IllegalMonitorStateException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
-            .acceptException(IllegalCallerException.class, IllegalFormatPrecisionException.class)
+            .elseIfRaises(IllegalCallerException.class, IllegalFormatPrecisionException.class)
             .thenCall((expectedException) -> testHelper.thenCallMe1())
-            .acceptException(RuntimeException.class, IllegalCharsetNameException.class)
+            .elseIfRaises(RuntimeException.class, IllegalCharsetNameException.class)
             .thenRethrow((exception -> new RuntimeException()))
             .elseCall(testHelper::elseCallMe)
             .finallyDone(testHelper::finallCallMe);
@@ -655,11 +655,11 @@ public class TryToCallTest {
     doThrow(new IllegalCharsetNameException("some value")).when(testHelper).throwException();
 
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalPathStateException.class, IllegalMonitorStateException.class)
+            .ifRaises(IllegalPathStateException.class, IllegalMonitorStateException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
-            .acceptException(IllegalCallerException.class, IllegalFormatPrecisionException.class, IllegalCharsetNameException.class)
+            .elseIfRaises(IllegalCallerException.class, IllegalFormatPrecisionException.class, IllegalCharsetNameException.class)
             .thenCall((expectedException) -> testHelper.thenCallMe1())
-            .acceptException(RuntimeException.class, IllegalCharsetNameException.class)
+            .elseIfRaises(RuntimeException.class, IllegalCharsetNameException.class)
             .thenRethrow((exception -> new RuntimeException()))
             .elseCall(testHelper::elseCallMe)
             .finallyDone(testHelper::finallCallMe);
@@ -678,11 +678,11 @@ public class TryToCallTest {
     expectedException.expect(RuntimeException.class);
     expectedException.expectMessage("new argument");
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class)
+            .ifRaises(IllegalArgumentException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
-            .acceptException(IllegalCallerException.class)
+            .elseIfRaises(IllegalCallerException.class)
             .thenCall((expectedException) -> testHelper.thenCallMe1())
-            .acceptException(IllegalStateException.class)
+            .elseIfRaises(IllegalStateException.class)
             .thenRethrow((exception -> new RuntimeException("new argument")))
             .elseCall(testHelper::elseCallMe)
             .finallyDone(testHelper::finallCallMe);
@@ -696,11 +696,11 @@ public class TryToCallTest {
     expectedException.expect(RuntimeException.class);
     expectedException.expectMessage("new argument");
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class, IllegalFormatPrecisionException.class)
+            .ifRaises(IllegalArgumentException.class, IllegalFormatPrecisionException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
-            .acceptException(IllegalCallerException.class)
+            .elseIfRaises(IllegalCallerException.class)
             .thenCall((expectedException) -> testHelper.thenCallMe1())
-            .acceptException(IllegalStateException.class, IllegalBlockingModeException.class)
+            .elseIfRaises(IllegalStateException.class, IllegalBlockingModeException.class)
             .thenRethrow((exception -> new RuntimeException("new argument")))
             .elseCall(testHelper::elseCallMe)
             .finallyDone(testHelper::finallCallMe);
@@ -714,11 +714,11 @@ public class TryToCallTest {
     expectedException.expect(RuntimeException.class);
     expectedException.expectMessage("new argument");
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class, IllegalFormatPrecisionException.class)
+            .ifRaises(IllegalArgumentException.class, IllegalFormatPrecisionException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
-            .acceptException(IllegalCallerException.class)
+            .elseIfRaises(IllegalCallerException.class)
             .thenCall((expectedException) -> testHelper.thenCallMe1())
-            .acceptException(IllegalStateException.class, IllegalBlockingModeException.class, IllegalCharsetNameException.class)
+            .elseIfRaises(IllegalStateException.class, IllegalBlockingModeException.class, IllegalCharsetNameException.class)
             .thenRethrow((exception -> new RuntimeException("new argument")))
             .elseCall(testHelper::elseCallMe)
             .finallyDone(testHelper::finallCallMe);
@@ -732,11 +732,11 @@ public class TryToCallTest {
     expectedException.expect(RuntimeException.class);
     expectedException.expectMessage("new argument");
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class, IllegalFormatPrecisionException.class)
+            .ifRaises(IllegalArgumentException.class, IllegalFormatPrecisionException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
-            .acceptException(IllegalCallerException.class)
+            .elseIfRaises(IllegalCallerException.class)
             .thenCall((expectedException) -> testHelper.thenCallMe1())
-            .acceptException(IllegalStateException.class, IllegalBlockingModeException.class)
+            .elseIfRaises(IllegalStateException.class, IllegalBlockingModeException.class)
             .thenRethrow((exception -> new RuntimeException("new argument")))
             .elseCall(testHelper::elseCallMe)
             .finallyDone(testHelper::finallCallMe);
@@ -750,11 +750,11 @@ public class TryToCallTest {
     expectedException.expect(RuntimeException.class);
     expectedException.expectMessage("new argument");
     Try.toCall(testHelper::throwException)
-            .acceptException(IllegalArgumentException.class, IllegalFormatPrecisionException.class)
+            .ifRaises(IllegalArgumentException.class, IllegalFormatPrecisionException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
-            .acceptException(IllegalCallerException.class)
+            .elseIfRaises(IllegalCallerException.class)
             .thenCall((expectedException) -> testHelper.thenCallMe1())
-            .acceptException(IllegalStateException.class, IllegalBlockingModeException.class, IllegalAccessException.class)
+            .elseIfRaises(IllegalStateException.class, IllegalBlockingModeException.class, IllegalAccessException.class)
             .thenRethrow((exception -> new RuntimeException("new argument")))
             .elseCall(testHelper::elseCallMe)
             .finallyDone(testHelper::finallCallMe);
@@ -766,11 +766,11 @@ public class TryToCallTest {
     doThrow(new IllegalStateException("some argument")).when(testHelper).throwException();
     try {
       Try.toCall(testHelper::throwException)
-              .acceptException(IllegalAccessError.class)
+              .ifRaises(IllegalAccessError.class)
               .thenCall((exception) -> testHelper.thenCallMe())
-              .acceptException(IllegalCallerException.class)
+              .elseIfRaises(IllegalCallerException.class)
               .thenCall((expectedException) -> testHelper.thenCallMe1())
-              .acceptException(IllegalStateException.class)
+              .elseIfRaises(IllegalStateException.class)
               .thenRethrow((exception -> new RuntimeException("new argument")))
               .elseCall(testHelper::elseCallMe)
               .finallyDone(testHelper::finallCallMe);
@@ -787,11 +787,11 @@ public class TryToCallTest {
     doThrow(new IllegalStateException()).when(testHelper).throwException();
     try {
       Try.toCall(testHelper::throwException)
-              .acceptException(IllegalAccessError.class, IllegalBlockingModeException.class)
+              .ifRaises(IllegalAccessError.class, IllegalBlockingModeException.class)
               .thenCall((exception) -> testHelper.thenCallMe())
-              .acceptException(IllegalCallerException.class, IllegalFormatException.class)
+              .elseIfRaises(IllegalCallerException.class, IllegalFormatException.class)
               .thenCall((expectedException) -> testHelper.thenCallMe1())
-              .acceptException(IllegalStateException.class, IllegalSelectorException.class, IllegalAccessError.class)
+              .elseIfRaises(IllegalStateException.class, IllegalSelectorException.class, IllegalAccessError.class)
               .thenRethrow((exception -> new RuntimeException("new argument")))
               .elseCall(testHelper::elseCallMe)
               .finallyDone(testHelper::finallCallMe);
@@ -808,11 +808,11 @@ public class TryToCallTest {
     doThrow(new IllegalSelectorException()).when(testHelper).throwException();
     try {
       Try.toCall(testHelper::throwException)
-              .acceptException(IllegalAccessError.class, IllegalBlockingModeException.class)
+              .ifRaises(IllegalAccessError.class, IllegalBlockingModeException.class)
               .thenCall((exception) -> testHelper.thenCallMe())
-              .acceptException(IllegalCallerException.class, IllegalFormatException.class)
+              .elseIfRaises(IllegalCallerException.class, IllegalFormatException.class)
               .thenCall((expectedException) -> testHelper.thenCallMe1())
-              .acceptException(IllegalStateException.class, IllegalSelectorException.class, IllegalAccessError.class)
+              .elseIfRaises(IllegalStateException.class, IllegalSelectorException.class, IllegalAccessError.class)
               .thenRethrow((exception -> new RuntimeException("new argument")))
               .elseCall(testHelper::elseCallMe)
               .finallyDone(testHelper::finallCallMe);
@@ -829,11 +829,11 @@ public class TryToCallTest {
     doThrow(new IllegalMonitorStateException()).when(testHelper).throwException();
     try {
       Try.toCall(testHelper::throwException)
-              .acceptException(IllegalAccessError.class, IllegalBlockingModeException.class)
+              .ifRaises(IllegalAccessError.class, IllegalBlockingModeException.class)
               .thenCall((exception) -> testHelper.thenCallMe())
-              .acceptException(IllegalCallerException.class, IllegalFormatException.class)
+              .elseIfRaises(IllegalCallerException.class, IllegalFormatException.class)
               .thenCall((expectedException) -> testHelper.thenCallMe1())
-              .acceptException(IllegalStateException.class, IllegalSelectorException.class, IllegalMonitorStateException.class)
+              .elseIfRaises(IllegalStateException.class, IllegalSelectorException.class, IllegalMonitorStateException.class)
               .thenRethrow((exception -> new RuntimeException("new argument")))
               .elseCall(testHelper::elseCallMe)
               .finallyDone(testHelper::finallCallMe);
@@ -849,11 +849,11 @@ public class TryToCallTest {
     TestHelper testHelper = mock(TestHelper.class);
     doThrow(new IllegalStateException("some argument")).when(testHelper).throwException();
     Try.toCall(testHelper::thenCallMe)
-            .acceptException(Exception.class)
+            .ifRaises(Exception.class)
             .thenCall((exception) -> testHelper.thenCallMe())
-            .acceptException(IllegalCallerException.class)
+            .elseIfRaises(IllegalCallerException.class)
             .thenCall((expectedException) -> testHelper.thenCallMe1())
-            .acceptException(IllegalStateException.class)
+            .elseIfRaises(IllegalStateException.class)
             .thenRethrow((exception -> new Exception("new argument")))
             .elseCall(testHelper::elseCallMe)
             .finallyDone(testHelper::finallCallMe);
@@ -867,11 +867,11 @@ public class TryToCallTest {
     TestHelper testHelper = mock(TestHelper.class);
     doThrow(new IllegalStateException("some argument")).when(testHelper).throwException();
     Try.toCall(testHelper::thenCallMe)
-            .acceptException(Exception.class, IllegalSelectorException.class)
+            .ifRaises(Exception.class, IllegalSelectorException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
-            .acceptException(IllegalCallerException.class, IllegalMonitorStateException.class)
+            .elseIfRaises(IllegalCallerException.class, IllegalMonitorStateException.class)
             .thenCall((expectedException) -> testHelper.thenCallMe1())
-            .acceptException(IllegalStateException.class, IllegalPathStateException.class, IllegalArgumentException.class)
+            .elseIfRaises(IllegalStateException.class, IllegalPathStateException.class, IllegalArgumentException.class)
             .thenRethrow((exception -> new Exception("new argument")))
             .elseCall(testHelper::elseCallMe)
             .finallyDone(testHelper::finallCallMe);
@@ -885,11 +885,11 @@ public class TryToCallTest {
     TestHelper testHelper = mock(TestHelper.class);
     doThrow(new IllegalPathStateException("some argument")).when(testHelper).throwException();
     Try.toCall(testHelper::thenCallMe)
-            .acceptException(Exception.class, IllegalSelectorException.class)
+            .ifRaises(Exception.class, IllegalSelectorException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
-            .acceptException(IllegalCallerException.class, IllegalMonitorStateException.class)
+            .elseIfRaises(IllegalCallerException.class, IllegalMonitorStateException.class)
             .thenCall((expectedException) -> testHelper.thenCallMe1())
-            .acceptException(IllegalStateException.class, IllegalPathStateException.class, IllegalArgumentException.class)
+            .elseIfRaises(IllegalStateException.class, IllegalPathStateException.class, IllegalArgumentException.class)
             .thenRethrow((exception -> new Exception("new argument")))
             .elseCall(testHelper::elseCallMe)
             .finallyDone(testHelper::finallCallMe);
@@ -903,11 +903,11 @@ public class TryToCallTest {
     TestHelper testHelper = mock(TestHelper.class);
     doThrow(new IllegalArgumentException("some argument")).when(testHelper).throwException();
     Try.toCall(testHelper::thenCallMe)
-            .acceptException(Exception.class, IllegalSelectorException.class)
+            .ifRaises(Exception.class, IllegalSelectorException.class)
             .thenCall((exception) -> testHelper.thenCallMe())
-            .acceptException(IllegalCallerException.class, IllegalMonitorStateException.class)
+            .elseIfRaises(IllegalCallerException.class, IllegalMonitorStateException.class)
             .thenCall((expectedException) -> testHelper.thenCallMe1())
-            .acceptException(IllegalStateException.class, IllegalPathStateException.class, IllegalArgumentException.class)
+            .elseIfRaises(IllegalStateException.class, IllegalPathStateException.class, IllegalArgumentException.class)
             .thenRethrow((exception -> new Exception("new argument")))
             .elseCall(testHelper::elseCallMe)
             .finallyDone(testHelper::finallCallMe);
@@ -924,7 +924,7 @@ public class TryToCallTest {
     expectedException.expect(IllegalArgumentException.class);
     expectedException.expectMessage("some argument some value");
     Try.toCall(testHelper::throwException)
-            .acceptException(RuntimeException.class)
+            .ifRaises(RuntimeException.class)
             .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
             .done();
   }
@@ -937,7 +937,7 @@ public class TryToCallTest {
     expectedException.expect(IllegalArgumentException.class);
     expectedException.expectMessage("some argument some value");
     Try.toCall(testHelper::throwException)
-            .acceptException(RuntimeException.class, IllegalPathStateException.class, IllegalArgumentException.class)
+            .ifRaises(RuntimeException.class, IllegalPathStateException.class, IllegalArgumentException.class)
             .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
             .done();
   }
@@ -950,7 +950,7 @@ public class TryToCallTest {
     expectedException.expect(IllegalArgumentException.class);
     expectedException.expectMessage("some argument some value");
     Try.toCall(testHelper::throwException)
-            .acceptException(RuntimeException.class, IllegalPathStateException.class, IllegalStateException.class)
+            .ifRaises(RuntimeException.class, IllegalPathStateException.class, IllegalStateException.class)
             .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
             .done();
   }
@@ -963,7 +963,7 @@ public class TryToCallTest {
     expectedException.expect(IllegalArgumentException.class);
     expectedException.expectMessage("some argument some value");
     Try.toCall(testHelper::throwException)
-            .acceptException(RuntimeException.class, IllegalPathStateException.class, IllegalStateException.class)
+            .ifRaises(RuntimeException.class, IllegalPathStateException.class, IllegalStateException.class)
             .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
             .done();
   }
@@ -975,7 +975,7 @@ public class TryToCallTest {
 
     try {
       Try.toCall(testHelper::throwException)
-              .acceptException(RuntimeException.class)
+              .ifRaises(RuntimeException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
               .elseCall(testHelper::elseCallMe)
               .done();
@@ -993,7 +993,7 @@ public class TryToCallTest {
 
     try {
       Try.toCall(testHelper::throwException)
-              .acceptException(IllegalMonitorStateException.class, IllegalPathStateException.class, IllegalStateException.class)
+              .ifRaises(IllegalMonitorStateException.class, IllegalPathStateException.class, IllegalStateException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
               .elseCall(testHelper::elseCallMe)
               .done();
@@ -1011,7 +1011,7 @@ public class TryToCallTest {
 
     try {
       Try.toCall(testHelper::throwException)
-              .acceptException(IllegalMonitorStateException.class, IllegalPathStateException.class, IllegalStateException.class)
+              .ifRaises(IllegalMonitorStateException.class, IllegalPathStateException.class, IllegalStateException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
               .elseCall(testHelper::elseCallMe)
               .done();
@@ -1029,7 +1029,7 @@ public class TryToCallTest {
 
     try {
       Try.toCall(testHelper::throwException)
-              .acceptException(IllegalMonitorStateException.class, IllegalPathStateException.class, IllegalStateException.class)
+              .ifRaises(IllegalMonitorStateException.class, IllegalPathStateException.class, IllegalStateException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
               .elseCall(testHelper::elseCallMe)
               .done();
@@ -1047,7 +1047,7 @@ public class TryToCallTest {
 
     try {
       Try.toCall(testHelper::throwException)
-              .acceptException(RuntimeException.class)
+              .ifRaises(RuntimeException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
               .finallyDone(testHelper::finallCallMe);
       fail("Expected IllegalArgumentException.");
@@ -1065,7 +1065,7 @@ public class TryToCallTest {
 
     try {
       Try.toCall(testHelper::throwException)
-              .acceptException(IllegalMonitorStateException.class, IllegalSelectorException.class, IllegalAccessException.class)
+              .ifRaises(IllegalMonitorStateException.class, IllegalSelectorException.class, IllegalAccessException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
               .finallyDone(testHelper::finallCallMe);
       fail("Expected IllegalArgumentException.");
@@ -1083,7 +1083,7 @@ public class TryToCallTest {
 
     try {
       Try.toCall(testHelper::throwException)
-              .acceptException(IllegalMonitorStateException.class, IllegalCallerException.class)
+              .ifRaises(IllegalMonitorStateException.class, IllegalCallerException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + " some value"))
               .finallyDone(testHelper::finallCallMe);
       fail("Expected IllegalArgumentException.");
@@ -1101,7 +1101,7 @@ public class TryToCallTest {
 
     try {
       Try.toCall(testHelper::throwException)
-              .acceptException(IllegalMonitorStateException.class, IllegalCallerException.class, IllegalStateException.class)
+              .ifRaises(IllegalMonitorStateException.class, IllegalCallerException.class, IllegalStateException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + " some value"))
               .finallyDone(testHelper::finallCallMe);
       fail("Expected IllegalArgumentException.");
@@ -1119,7 +1119,7 @@ public class TryToCallTest {
 
     try {
       Try.toCall(testHelper::throwException)
-              .acceptException(IllegalMonitorStateException.class, IllegalCallerException.class, IllegalStateException.class)
+              .ifRaises(IllegalMonitorStateException.class, IllegalCallerException.class, IllegalStateException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + " some value"))
               .finallyDone(testHelper::finallCallMe);
       fail("Expected IllegalArgumentException.");
@@ -1137,7 +1137,7 @@ public class TryToCallTest {
 
     try {
       Try.toCall(testHelper::throwException)
-              .acceptException(RuntimeException.class)
+              .ifRaises(RuntimeException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
               .elseCall(testHelper::elseCallMe)
               .finallyDone(testHelper::finallCallMe);
@@ -1157,7 +1157,7 @@ public class TryToCallTest {
 
     try {
       Try.toCall(testHelper::throwException)
-              .acceptException(IllegalPathStateException.class, IllegalFormatException.class)
+              .ifRaises(IllegalPathStateException.class, IllegalFormatException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + " some value"))
               .elseCall(testHelper::elseCallMe)
               .finallyDone(testHelper::finallCallMe);
@@ -1177,7 +1177,7 @@ public class TryToCallTest {
 
     try {
       Try.toCall(testHelper::throwException)
-              .acceptException(IllegalStateException.class, IllegalAccessError.class, IllegalSelectorException.class)
+              .ifRaises(IllegalStateException.class, IllegalAccessError.class, IllegalSelectorException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + " some value"))
               .elseCall(testHelper::elseCallMe)
               .finallyDone(testHelper::finallCallMe);
@@ -1197,7 +1197,7 @@ public class TryToCallTest {
 
     try {
       Try.toCall(testHelper::throwException)
-              .acceptException(IllegalStateException.class, IllegalAccessError.class, IllegalCallerException.class)
+              .ifRaises(IllegalStateException.class, IllegalAccessError.class, IllegalCallerException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + " some value"))
               .elseCall(testHelper::elseCallMe)
               .finallyDone(testHelper::finallCallMe);
@@ -1218,7 +1218,7 @@ public class TryToCallTest {
     expectedException.expect(IllegalArgumentException.class);
     expectedException.expectMessage("some argument some value");
     Try.toCall(testHelper::throwException)
-            .acceptException(RuntimeException.class)
+            .ifRaises(RuntimeException.class)
             .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
             .done();
   }
@@ -1231,7 +1231,7 @@ public class TryToCallTest {
     expectedException.expect(IllegalArgumentException.class);
     expectedException.expectMessage("some argument some value");
     Try.toCall(testHelper::throwException)
-            .acceptException(IndexOutOfBoundsException.class, RuntimeException.class, Exception.class)
+            .ifRaises(IndexOutOfBoundsException.class, RuntimeException.class, Exception.class)
             .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
             .done();
   }
@@ -1244,7 +1244,7 @@ public class TryToCallTest {
     expectedException.expect(IllegalArgumentException.class);
     expectedException.expectMessage("some argument some value");
     Try.toCall(testHelper::throwCheckedException)
-            .acceptException(IndexOutOfBoundsException.class, RuntimeException.class, Exception.class)
+            .ifRaises(IndexOutOfBoundsException.class, RuntimeException.class, Exception.class)
             .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
             .done();
   }
@@ -1257,7 +1257,7 @@ public class TryToCallTest {
     expectedException.expect(IllegalArgumentException.class);
     expectedException.expectMessage("some argument some value");
     Try.toCall(testHelper::throwCheckedException)
-            .acceptException(IndexOutOfBoundsException.class, RuntimeException.class, Exception.class)
+            .ifRaises(IndexOutOfBoundsException.class, RuntimeException.class, Exception.class)
             .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
             .done();
   }
@@ -1269,7 +1269,7 @@ public class TryToCallTest {
 
     try {
       Try.toCall(testHelper::throwException)
-              .acceptException(RuntimeException.class)
+              .ifRaises(RuntimeException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
               .elseCall(testHelper::elseCallMe)
               .done();
@@ -1289,7 +1289,7 @@ public class TryToCallTest {
 
     try {
       Try.toCall(testHelper::throwException)
-              .acceptException(RuntimeException.class, IllegalMonitorStateException.class, IOException.class)
+              .ifRaises(RuntimeException.class, IllegalMonitorStateException.class, IOException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
               .elseCall(testHelper::elseCallMe)
               .done();
@@ -1309,7 +1309,7 @@ public class TryToCallTest {
 
     try {
       Try.toCall(testHelper::throwCheckedException)
-              .acceptException(RuntimeException.class, SQLException.class, IOException.class)
+              .ifRaises(RuntimeException.class, SQLException.class, IOException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
               .elseCall(testHelper::elseCallMe)
               .done();
@@ -1329,7 +1329,7 @@ public class TryToCallTest {
 
     try {
       Try.toCall(testHelper::throwCheckedException)
-              .acceptException(RuntimeException.class, SQLException.class, IOException.class)
+              .ifRaises(RuntimeException.class, SQLException.class, IOException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
               .elseCall(testHelper::elseCallMe)
               .done();
@@ -1349,7 +1349,7 @@ public class TryToCallTest {
 
     try {
       Try.toCall(testHelper::throwException)
-              .acceptException(RuntimeException.class)
+              .ifRaises(RuntimeException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
               .finallyDone(testHelper::finallCallMe);
       fail("Expected IllegalArgumentException.");
@@ -1368,7 +1368,7 @@ public class TryToCallTest {
 
     try {
       Try.toCall(testHelper::throwException)
-              .acceptException(RuntimeException.class, SQLException.class, IOException.class)
+              .ifRaises(RuntimeException.class, SQLException.class, IOException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
               .finallyDone(testHelper::finallCallMe);
       fail("Expected IllegalArgumentException.");
@@ -1386,7 +1386,7 @@ public class TryToCallTest {
     doThrow(new FileNotFoundException("some argument ")).when(testHelper).throwCheckedException();
     try {
       Try.toCall(testHelper::throwCheckedException)
-              .acceptException(RuntimeException.class, SQLException.class, FileNotFoundException.class)
+              .ifRaises(RuntimeException.class, SQLException.class, FileNotFoundException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
               .finallyDone(testHelper::finallCallMe);
       fail("Expected IllegalArgumentException.");
@@ -1405,7 +1405,7 @@ public class TryToCallTest {
 
     try {
       Try.toCall(testHelper::throwCheckedException)
-              .acceptException(RuntimeException.class, Exception.class)
+              .ifRaises(RuntimeException.class, Exception.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
               .finallyDone(testHelper::finallCallMe);
       fail("Expected IllegalArgumentException.");
@@ -1424,7 +1424,7 @@ public class TryToCallTest {
 
     try {
       Try.toCall(testHelper::throwException)
-              .acceptException(RuntimeException.class)
+              .ifRaises(RuntimeException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
               .elseCall(testHelper::elseCallMe)
               .finallyDone(testHelper::finallCallMe);
@@ -1445,7 +1445,7 @@ public class TryToCallTest {
 
     try {
       Try.toCall(testHelper::throwException)
-              .acceptException(RuntimeException.class, Exception.class)
+              .ifRaises(RuntimeException.class, Exception.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
               .elseCall(testHelper::elseCallMe)
               .finallyDone(testHelper::finallCallMe);
@@ -1466,7 +1466,7 @@ public class TryToCallTest {
 
     try {
       Try.toCall(testHelper::throwCheckedException)
-              .acceptException(RuntimeException.class, SQLException.class, IOException.class)
+              .ifRaises(RuntimeException.class, SQLException.class, IOException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
               .elseCall(testHelper::elseCallMe)
               .finallyDone(testHelper::finallCallMe);
@@ -1487,7 +1487,7 @@ public class TryToCallTest {
 
     try {
       Try.toCall(testHelper::throwCheckedException)
-              .acceptException(RuntimeException.class, SQLException.class, IOException.class)
+              .ifRaises(RuntimeException.class, SQLException.class, IOException.class)
               .thenRethrow((exception) -> new IllegalArgumentException(exception.getMessage() + "some value"))
               .elseCall(testHelper::elseCallMe)
               .finallyDone(testHelper::finallCallMe);
