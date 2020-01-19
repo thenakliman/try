@@ -1,15 +1,13 @@
 package com.thenakliman.tries;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.thenakliman.tries.Constant.DO_NOTHING;
 import static com.thenakliman.tries.SneakyThrower.sneakyThrow;
+import static com.thenakliman.tries.Utils.executeCallable;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
@@ -25,13 +23,13 @@ class TryToCall {
   }
 
   <X extends Throwable, Y extends Throwable> ThenHandler acceptException(final Class<? extends X> exceptionClass1,
-                                                    final Class<? extends Y> exceptionClass2) throws X, Y {
+                                                                         final Class<? extends Y> exceptionClass2) throws X, Y {
     return new ThenHandler(this.callable, Arrays.asList(exceptionClass1, exceptionClass2), emptyList());
   }
 
-  <X extends Throwable> ThenHandler acceptException(final Class<? extends X> exceptionClass1,
-                                                    final Class<? extends X> exceptionClass2,
-                                                    final Class<? extends X> exceptionClass3) throws X {
+  <X extends Throwable, Y extends Throwable, Z extends Throwable> ThenHandler acceptException(final Class<? extends X> exceptionClass1,
+                                                                                              final Class<? extends Y> exceptionClass2,
+                                                                                              final Class<? extends Z> exceptionClass3) throws X, Y, Z {
 
     return new ThenHandler(this.callable, Arrays.asList(exceptionClass1, exceptionClass2, exceptionClass3), emptyList());
   }
@@ -50,19 +48,21 @@ class TryToCall {
     }
 
     public Executor thenCall(final Consumer<Throwable> thenConsumer) {
+      final ArrayList<IExceptionHandler> registeredExceptionHandlers = new ArrayList<>(this.exceptionsHandlers);
       final List<IExceptionHandler> exceptionHandlers = this.exceptionClasses.stream()
               .map(exceptionClass -> new ExceptionConsumer(exceptionClass, thenConsumer))
               .collect(Collectors.toList());
-      exceptionHandlers.addAll(this.exceptionsHandlers);
-      return new Executor(this.callable, Collections.unmodifiableList(exceptionHandlers), DO_NOTHING);
+      registeredExceptionHandlers.addAll(exceptionHandlers);
+      return new Executor(this.callable, Collections.unmodifiableList(registeredExceptionHandlers), DO_NOTHING);
     }
 
     public Executor thenRethrow(final Function<Throwable, ? extends Throwable> exceptionFunction) {
+      final ArrayList<IExceptionHandler> registeredExceptionHandlers = new ArrayList<>(this.exceptionsHandlers);
       final List<IExceptionHandler> exceptionHandlers = this.exceptionClasses.stream()
               .map(exceptionClass -> new ExceptionThrower(exceptionClass, exceptionFunction))
               .collect(Collectors.toList());
-      exceptionHandlers.addAll(this.exceptionsHandlers);
-      return new Executor(this.callable, Collections.unmodifiableList(exceptionHandlers), DO_NOTHING);
+      registeredExceptionHandlers.addAll(exceptionHandlers);
+      return new Executor(this.callable, Collections.unmodifiableList(registeredExceptionHandlers), DO_NOTHING);
     }
   }
 
@@ -111,7 +111,17 @@ class TryToCall {
     }
   }
 
-  public static class Executor {
+  interface IElseCall {
+    IExecutor elseCall(final Callable callable);
+  }
+
+  interface IExecutor {
+    void done();
+
+    void finallyDone(final Callable callable);
+  }
+
+  public static class Executor implements IElseCall, IExecutor {
     final private Callable callable;
     final private List<IExceptionHandler> exceptions;
     final private Callable elseCallable;
@@ -124,49 +134,46 @@ class TryToCall {
       this.elseCallable = doNothing;
     }
 
+    @Override
     public void done() {
       boolean success = false;
       try {
         this.callable.call();
         success = true;
       } catch (Throwable exception) {
-        Optional<IExceptionHandler> matchedException = this.exceptions.stream()
-                .filter((exceptionHandler -> exceptionHandler.getThrowableClass().isInstance(exception)))
-                .findFirst();
-
-        if (matchedException.isPresent()) {
-          matchedException.get().handleException(exception);
-        } else {
-          throw exception;
-        }
+        handleException(exception);
       }
 
       if (success) {
-        this.elseCallable.call();
+        executeCallable(this.elseCallable);
       }
     }
 
+    private void handleException(Throwable exception) {
+      Optional<IExceptionHandler> matchedException = this.exceptions.stream()
+              .filter((exceptionHandler -> exceptionHandler.getThrowableClass().isInstance(exception)))
+              .findFirst();
+      if (matchedException.isPresent()) {
+        matchedException.get().handleException(exception);
+      } else {
+        throw sneakyThrow(exception);
+      }
+    }
+
+    @Override
     public void finallyDone(final Callable finallyCallable) {
       boolean success = false;
       try {
         this.callable.call();
         success = true;
       } catch (Throwable exception) {
-        Optional<IExceptionHandler> matchedException = this.exceptions.stream()
-                .filter((exceptionHandler -> exceptionHandler.getThrowableClass().isInstance(exception)))
-                .findFirst();
-
-        if (matchedException.isPresent()) {
-          matchedException.get().handleException(exception);
-        } else {
-          throw exception;
-        }
+        handleException(exception);
       } finally {
-        finallyCallable.call();
+        executeCallable(finallyCallable);
       }
 
       if (success) {
-        this.elseCallable.call();
+        executeCallable(this.elseCallable);
       }
     }
 
@@ -188,7 +195,8 @@ class TryToCall {
       return new ThenHandler(this.callable, Arrays.asList(exceptionClass1, exceptionClass2), this.exceptions);
     }
 
-    public Executor elseCall(final Callable elseCallable) {
+    @Override
+    public IExecutor elseCall(final Callable elseCallable) {
       return new Executor(this.callable, this.exceptions, elseCallable);
     }
   }

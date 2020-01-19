@@ -8,6 +8,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static com.thenakliman.tries.SneakyThrower.sneakyThrow;
+import static com.thenakliman.tries.Utils.executeCallable;
 import static java.util.Collections.emptyList;
 
 class TryToGet<T> {
@@ -92,8 +93,7 @@ class TryToGet<T> {
 
     @Override
     public T handleException(final Throwable exception) {
-      sneakyThrow(exceptionFunction.apply(exception));
-      return null; // unreachable statement, need for compiles
+      throw sneakyThrow(exceptionFunction.apply(exception));
     }
   }
 
@@ -119,17 +119,22 @@ class TryToGet<T> {
       try {
         value = this.valueSupplier.get();
       } catch (Throwable exception) {
-        Optional<IExceptionHandler<T>> first = this.exceptionHandlers.stream()
-                .filter(exceptionT -> exceptionT.getThrowableClass().isInstance(exception))
-                .findFirst();
-        if (first.isPresent()) {
-          return first.get().handleException(exception);
-        }
-
-        throw exception;
+        return handleException(exception);
       }
       this.elseConsumer.accept(value);
       return value;
+    }
+
+    private T handleException(Throwable exception) {
+      Optional<IExceptionHandler<T>> first = this.exceptionHandlers.stream()
+              .filter(exceptionHandler -> exceptionHandler.getThrowableClass().isInstance(exception))
+              .findFirst();
+
+      if (first.isPresent()) {
+        return first.get().handleException(exception);
+      }
+
+      throw sneakyThrow(exception);
     }
 
     public T finallyDone(final Callable finallyCallable) {
@@ -137,17 +142,9 @@ class TryToGet<T> {
       try {
         value = this.valueSupplier.get();
       } catch (Throwable exception) {
-        Optional<IExceptionHandler<T>> first = this.exceptionHandlers.stream()
-                .filter(exceptionT -> exceptionT.getThrowableClass().isInstance(exception))
-                .findFirst();
-
-        if (first.isPresent()) {
-          return first.get().handleException(exception);
-        }
-
-        throw exception;
+        return handleException(exception);
       } finally {
-        finallyCallable.call();
+        executeCallable(finallyCallable);
       }
       this.elseConsumer.accept(value);
       return value;
