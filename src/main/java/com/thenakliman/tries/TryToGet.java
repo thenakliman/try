@@ -126,7 +126,17 @@ class TryToGet<T> {
     }
   }
 
-  public static class Executor<T> {
+  interface IElseCall<T> {
+    IExecutor<T> elseCall(Consumer<T> consumer);
+  }
+
+  interface IExecutor<T> {
+    T done();
+
+    T finallyDone(final Callable finallyCallable);
+  }
+
+  public static class Executor<T> implements IElseCall<T>, IExecutor<T> {
     final private Supplier<T> valueSupplier;
     final private List<IExceptionHandler<T>> exceptionHandlers;
     final private Consumer<T> elseConsumer;
@@ -140,6 +150,7 @@ class TryToGet<T> {
       this.elseConsumer = elseConsumer;
     }
 
+    @Override
     public T done() {
       final T value;
       try {
@@ -163,6 +174,7 @@ class TryToGet<T> {
       throw sneakyThrow(exception);
     }
 
+    @Override
     public T finallyDone(final Callable finallyCallable) {
       final T value;
       try {
@@ -176,8 +188,9 @@ class TryToGet<T> {
       return value;
     }
 
-    public Executor<T> elseCall(final Consumer<T> elseConsumer) {
-      return new Executor<>(
+    @Override
+    public IExecutor<T> elseCall(final Consumer<T> elseConsumer) {
+      return new Executor<T>(
               this.valueSupplier,
               this.exceptionHandlers,
               elseConsumer);
