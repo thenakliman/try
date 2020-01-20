@@ -156,14 +156,9 @@ public class TryToGetTest {
 
   @Test
   public void try_toGetThenGet_returnThenValue_whenExceptionIsRaised() {
-    Supplier<Integer> supplier = () -> {
-      if (true) {
-        throw new IllegalArgumentException("");
-      }
-      return 10;
-    };
-
-    Integer done = Try.toGet(supplier)
+    TestHelper testHelper = mock(TestHelper.class);
+    when(testHelper.thenGet()).thenThrow(IllegalArgumentException.class);
+    Integer done = Try.toGet(testHelper::thenGet)
             .ifRaises(RuntimeException.class)
             .thenGet((exception) -> 20)
             .done();
@@ -172,14 +167,10 @@ public class TryToGetTest {
 
   @Test
   public void try_toGetThenGet_returnThenValue_whenFirstExceptionIsRaised_whenTwoExceptionsAreHandled() {
-    Supplier<Integer> supplier = () -> {
-      if (true) {
-        throw new IllegalArgumentException("");
-      }
-      return 10;
-    };
+    TestHelper testHelper = mock(TestHelper.class);
+    when(testHelper.thenGet()).thenThrow(IllegalArgumentException.class);
 
-    Integer done = Try.toGet(supplier)
+    Integer done = Try.toGet(testHelper::thenGet)
             .ifRaises(IllegalArgumentException.class, IllegalStateException.class)
             .thenGet((exception) -> 20)
             .done();
@@ -188,14 +179,10 @@ public class TryToGetTest {
 
   @Test
   public void try_toGetThenGet_returnThenValue_whenSecondExceptionIsRaised_whenThreeExceptionsAreHandled() {
-    Supplier<Integer> supplier = () -> {
-      if (true) {
-        throw new IllegalStateException("");
-      }
-      return 10;
-    };
+    TestHelper testHelper = mock(TestHelper.class);
+    when(testHelper.thenGet()).thenThrow(IllegalStateException.class);
 
-    Integer done = Try.toGet(supplier)
+    Integer done = Try.toGet(testHelper::thenGet)
             .ifRaises(IllegalArgumentException.class, IllegalStateException.class, IllegalPathStateException.class)
             .thenGet((exception) -> 20)
             .done();
@@ -204,14 +191,10 @@ public class TryToGetTest {
 
   @Test
   public void try_toGetThenGet_returnThenValue_whenThirdExceptionIsRaised_whenThreeExceptionsAreHandled() {
-    Supplier<Integer> supplier = () -> {
-      if (true) {
-        throw new IllegalPathStateException("");
-      }
-      return 10;
-    };
+    TestHelper testHelper = mock(TestHelper.class);
+    when(testHelper.thenGet()).thenThrow(IllegalPathStateException.class);
 
-    Integer done = Try.toGet(supplier)
+    Integer done = Try.toGet(testHelper::thenGet)
             .ifRaises(IllegalArgumentException.class, IllegalStateException.class, IllegalPathStateException.class)
             .thenGet((exception) -> 20)
             .done();
@@ -220,15 +203,10 @@ public class TryToGetTest {
 
   @Test
   public void try_toGetThenGetElseCall_returnThenValue_whenExceptionIsRaised() {
-    Supplier<Integer> supplier = () -> {
-      if (true) {
-        throw new IllegalArgumentException("");
-      }
-      return 10;
-    };
-
     TestHelper testHelper = mock(TestHelper.class);
-    Integer done = Try.toGet(supplier)
+    when(testHelper.thenGet()).thenThrow(IllegalArgumentException.class);
+
+    Integer done = Try.toGet(testHelper::thenGet)
             .ifRaises(RuntimeException.class)
             .thenGet((exception) -> 20)
             .elseCall((value) -> testHelper.elseCallMe())
@@ -239,15 +217,9 @@ public class TryToGetTest {
 
   @Test
   public void try_toGetThenGetElseCall_returnThenValue_whenExceptionFirstIsRaised_whenTwoExceptionsAreHandled() {
-    Supplier<Integer> supplier = () -> {
-      if (true) {
-        throw new IllegalArgumentException("");
-      }
-      return 10;
-    };
-
     TestHelper testHelper = mock(TestHelper.class);
-    Integer done = Try.toGet(supplier)
+    when(testHelper.thenGet()).thenThrow(IllegalArgumentException.class);
+    Integer done = Try.toGet(testHelper::thenGet)
             .ifRaises(IllegalArgumentException.class, IllegalPathStateException.class)
             .thenGet((exception) -> 20)
             .elseCall((value) -> testHelper.elseCallMe())
@@ -258,15 +230,9 @@ public class TryToGetTest {
 
   @Test
   public void try_toGetThenGetElseCall_returnThenValue_whenExceptionSecondIsRaised_whenTwoExceptionsAreHandled() {
-    Supplier<Integer> supplier = () -> {
-      if (true) {
-        throw new IllegalPathStateException("");
-      }
-      return 10;
-    };
-
     TestHelper testHelper = mock(TestHelper.class);
-    Integer done = Try.toGet(supplier)
+    when(testHelper.thenGet()).thenThrow(IllegalPathStateException.class);
+    Integer done = Try.toGet(testHelper::thenGet)
             .ifRaises(IllegalArgumentException.class, IllegalPathStateException.class)
             .thenGet((exception) -> 20)
             .elseCall((value) -> testHelper.elseCallMe())
@@ -277,15 +243,9 @@ public class TryToGetTest {
 
   @Test
   public void try_toGetThenGetElseCall_returnThenValue_whenExceptionSecondIsRaised_whenThreeExceptionsAreHandled() {
-    Supplier<Integer> supplier = () -> {
-      if (true) {
-        throw new IllegalPathStateException("");
-      }
-      return 10;
-    };
-
     TestHelper testHelper = mock(TestHelper.class);
-    Integer done = Try.toGet(supplier)
+    when(testHelper.thenGet()).thenThrow(IllegalPathStateException.class);
+    Integer done = Try.toGet(testHelper::thenGet)
             .ifRaises(IllegalArgumentException.class, IllegalPathStateException.class, IllegalMonitorStateException.class)
             .thenGet((exception) -> 20)
             .elseCall((value) -> testHelper.elseCallMe())
@@ -296,15 +256,9 @@ public class TryToGetTest {
 
   @Test
   public void try_toGetThenGetElseCall_returnThenValue_whenExceptionThirdIsRaised_whenThreeExceptionsAreHandled() {
-    Supplier<Integer> supplier = () -> {
-      if (true) {
-        throw new IllegalMonitorStateException("");
-      }
-      return 10;
-    };
-
     TestHelper testHelper = mock(TestHelper.class);
-    Integer done = Try.toGet(supplier)
+    when(testHelper.thenGet()).thenThrow(IllegalMonitorStateException.class);
+    Integer done = Try.toGet(testHelper::thenGet)
             .ifRaises(IllegalArgumentException.class, IllegalPathStateException.class, IllegalMonitorStateException.class)
             .thenGet((exception) -> 20)
             .elseCall((value) -> testHelper.elseCallMe())
@@ -315,15 +269,9 @@ public class TryToGetTest {
 
   @Test
   public void try_toGetThenGetFinallyCalled_returnThenValueFinallyCalled_whenExceptionIsRaised() {
-    Supplier<Integer> supplier = () -> {
-      if (true) {
-        throw new IllegalArgumentException("");
-      }
-      return 10;
-    };
-
     TestHelper testHelper = mock(TestHelper.class);
-    Integer done = Try.toGet(supplier)
+    when(testHelper.thenGet()).thenThrow(IllegalArgumentException.class);
+    Integer done = Try.toGet(testHelper::thenGet)
             .ifRaises(RuntimeException.class)
             .thenGet((exception) -> 20)
             .finallyDone(testHelper::finallCallMe);
@@ -333,15 +281,9 @@ public class TryToGetTest {
 
   @Test
   public void try_toGetThenGetFinallyCalled_returnThenValueFinallyCalled_whenFirstExceptionIsRaised_whenTwoExceptionsAreRaised() {
-    Supplier<Integer> supplier = () -> {
-      if (true) {
-        throw new IllegalArgumentException("");
-      }
-      return 10;
-    };
-
     TestHelper testHelper = mock(TestHelper.class);
-    Integer done = Try.toGet(supplier)
+    when(testHelper.thenGet()).thenThrow(IllegalArgumentException.class);
+    Integer done = Try.toGet(testHelper::thenGet)
             .ifRaises(IllegalArgumentException.class, IllegalSelectorException.class)
             .thenGet((exception) -> 20)
             .finallyDone(testHelper::finallCallMe);
@@ -351,15 +293,9 @@ public class TryToGetTest {
 
   @Test
   public void try_toGetThenGetFinallyCalled_returnThenValueFinallyCalled_whenSecondExceptionIsRaised_whenTwoExceptionsAreRaised() {
-    Supplier<Integer> supplier = () -> {
-      if (true) {
-        throw new IllegalSelectorException();
-      }
-      return 10;
-    };
-
     TestHelper testHelper = mock(TestHelper.class);
-    Integer done = Try.toGet(supplier)
+    when(testHelper.thenGet()).thenThrow(IllegalArgumentException.class);
+    Integer done = Try.toGet(testHelper::thenGet)
             .ifRaises(IllegalArgumentException.class, IllegalSelectorException.class)
             .thenGet((exception) -> 20)
             .finallyDone(testHelper::finallCallMe);
@@ -369,15 +305,9 @@ public class TryToGetTest {
 
   @Test
   public void try_toGetThenGetFinallyCalled_returnThenValueFinallyCalled_whenSecondExceptionIsRaised_whenThreeExceptionsAreRaised() {
-    Supplier<Integer> supplier = () -> {
-      if (true) {
-        throw new IllegalSelectorException();
-      }
-      return 10;
-    };
-
     TestHelper testHelper = mock(TestHelper.class);
-    Integer done = Try.toGet(supplier)
+    when(testHelper.thenGet()).thenThrow(IllegalSelectorException.class);
+    Integer done = Try.toGet(testHelper::thenGet)
             .ifRaises(IllegalArgumentException.class, IllegalSelectorException.class, IllegalComponentStateException.class)
             .thenGet((exception) -> 20)
             .finallyDone(testHelper::finallCallMe);
@@ -387,15 +317,9 @@ public class TryToGetTest {
 
   @Test
   public void try_toGetThenGetElseCallFinallyCall_returnThenValueFinallyCalled_whenExceptionIsRaised() {
-    Supplier<Integer> supplier = () -> {
-      if (true) {
-        throw new IllegalArgumentException("");
-      }
-      return 10;
-    };
-
     TestHelper testHelper = mock(TestHelper.class);
-    Integer done = Try.toGet(supplier)
+    when(testHelper.thenGet()).thenThrow(IllegalArgumentException.class);
+    Integer done = Try.toGet(testHelper::thenGet)
             .ifRaises(RuntimeException.class)
             .thenGet((exception) -> 20)
             .elseCall(value -> testHelper.elseCallMe())
@@ -407,15 +331,9 @@ public class TryToGetTest {
 
   @Test
   public void try_toGetThenGetElseCallFinallyCall_returnThenValueFinallyCalled_whenFirstExceptionIsRaised_whenTwoExceptionsAreRaised() {
-    Supplier<Integer> supplier = () -> {
-      if (true) {
-        throw new IllegalMonitorStateException("");
-      }
-      return 10;
-    };
-
     TestHelper testHelper = mock(TestHelper.class);
-    Integer done = Try.toGet(supplier)
+    when(testHelper.thenGet()).thenThrow(IllegalMonitorStateException.class);
+    Integer done = Try.toGet(testHelper::thenGet)
             .ifRaises(IllegalMonitorStateException.class, IllegalStateException.class)
             .thenGet((exception) -> 20)
             .elseCall(value -> testHelper.elseCallMe())
@@ -427,15 +345,9 @@ public class TryToGetTest {
 
   @Test
   public void try_toGetThenGetElseCallFinallyCall_returnThenValueFinallyCalled_whenSecondExceptionIsRaised_whenTwoExceptionsAreRaised() {
-    Supplier<Integer> supplier = () -> {
-      if (true) {
-        throw new IllegalStateException("");
-      }
-      return 10;
-    };
-
     TestHelper testHelper = mock(TestHelper.class);
-    Integer done = Try.toGet(supplier)
+    when(testHelper.thenGet()).thenThrow(new IllegalStateException("illegal "));
+    Integer done = Try.toGet(testHelper::thenGet)
             .ifRaises(IllegalMonitorStateException.class, IllegalStateException.class)
             .thenGet((exception) -> 20)
             .elseCall(value -> testHelper.elseCallMe())
@@ -447,15 +359,9 @@ public class TryToGetTest {
 
   @Test
   public void try_toGetThenGetElseCallFinallyCall_returnThenValueFinallyCalled_whenSecondExceptionIsRaised_whenThreeExceptionsAreRaised() {
-    Supplier<Integer> supplier = () -> {
-      if (true) {
-        throw new IllegalStateException("");
-      }
-      return 10;
-    };
-
     TestHelper testHelper = mock(TestHelper.class);
-    Integer done = Try.toGet(supplier)
+    when(testHelper.thenGet()).thenThrow(IllegalStateException.class);
+    Integer done = Try.toGet(testHelper::thenGet)
             .ifRaises(IllegalMonitorStateException.class, IllegalStateException.class, IllegalArgumentException.class)
             .thenGet((exception) -> 20)
             .elseCall(value -> testHelper.elseCallMe())
@@ -467,15 +373,9 @@ public class TryToGetTest {
 
   @Test
   public void try_toGetThenGetElseCallFinallyCall_returnThenValueFinallyCalled_whenThirdExceptionIsRaised_whenThreeExceptionsAreRaised() {
-    Supplier<Integer> supplier = () -> {
-      if (true) {
-        throw new IllegalArgumentException("");
-      }
-      return 10;
-    };
-
     TestHelper testHelper = mock(TestHelper.class);
-    Integer done = Try.toGet(supplier)
+    when(testHelper.thenGet()).thenThrow(IllegalArgumentException.class);
+    Integer done = Try.toGet(testHelper::thenGet)
             .ifRaises(IllegalMonitorStateException.class, IllegalStateException.class, IllegalArgumentException.class)
             .thenGet((exception) -> 20)
             .elseCall(value -> testHelper.elseCallMe())
@@ -550,16 +450,11 @@ public class TryToGetTest {
 
   @Test
   public void try_toGetThenThrow_throwException_whenExceptionIsRaised() {
-    Supplier<Integer> supplier = () -> {
-      if (true) {
-        throw new IllegalArgumentException("illegal ");
-      }
-      return 10;
-    };
-
+    TestHelper testHelper = mock(TestHelper.class);
+    when(testHelper.thenGet()).thenThrow(new IllegalArgumentException("illegal "));
     expectedException.expect(RuntimeException.class);
     expectedException.expectMessage("illegal run time");
-    Try.toGet(supplier)
+    Try.toGet(testHelper::thenGet)
             .ifRaises(RuntimeException.class)
             .thenRethrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
             .done();
@@ -567,50 +462,38 @@ public class TryToGetTest {
 
   @Test
   public void try_toGetThenThrow_throwException_whenExceptionIsRaised_whenTwoExceptionsAreHandled() throws Exception {
-    Supplier<Integer> supplier = () -> {
-      if (true) {
-        throw new IllegalArgumentException("illegal ");
-      }
-      return 10;
-    };
+    TestHelper testHelper = mock(TestHelper.class);
+    when(testHelper.thenGet()).thenThrow(new IllegalArgumentException("illegal"));
 
     expectedException.expect(RuntimeException.class);
     expectedException.expectMessage("illegal run time");
-    Try.toGet(supplier)
+    Try.toGet(testHelper::thenGet)
             .ifRaises(IllegalArgumentException.class, IllegalStateException.class)
-            .thenRethrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
+            .thenRethrow((exception) -> new RuntimeException(exception.getMessage() + " run time"))
             .done();
   }
 
   @Test
   public void try_toGetThenThrow_throwException_whenExceptionIsRaised_whenThreeExceptionsAreHandled() throws Exception {
-    Supplier<Integer> supplier = () -> {
-      if (true) {
-        throw new IllegalArgumentException("illegal ");
-      }
-      return 10;
-    };
+    TestHelper testHelper = mock(TestHelper.class);
+    when(testHelper.thenGet()).thenThrow(new IllegalArgumentException("illegal"));
 
     expectedException.expect(RuntimeException.class);
     expectedException.expectMessage("illegal run time");
-    Try.toGet(supplier)
+    Try.toGet(testHelper::thenGet)
             .ifRaises(IllegalArgumentException.class, IllegalStateException.class, IllegalAccessException.class)
-            .thenRethrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
+            .thenRethrow((exception) -> new RuntimeException(exception.getMessage() + " run time"))
             .done();
   }
 
   @Test
   public void try_toGetThenThrow_throwException_whenSecondExceptionIsRaised_whenThreeExceptionsAreHandled() throws Exception {
-    Supplier<Integer> supplier = () -> {
-      if (true) {
-        throw new IllegalStateException("illegal ");
-      }
-      return 10;
-    };
+    TestHelper testHelper = mock(TestHelper.class);
+    when(testHelper.thenGet()).thenThrow(new IllegalArgumentException("illegal "));
 
     expectedException.expect(RuntimeException.class);
     expectedException.expectMessage("illegal run time");
-    Try.toGet(supplier)
+    Try.toGet(testHelper::thenGet)
             .ifRaises(IllegalArgumentException.class, IllegalStateException.class, IllegalAccessException.class)
             .thenRethrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
             .done();
@@ -618,16 +501,12 @@ public class TryToGetTest {
 
   @Test
   public void try_toGetThenThrow_throwException_whenThirdExceptionIsRaised_whenThreeExceptionsAreHandled() throws Exception {
-    Supplier<Integer> supplier = () -> {
-      if (true) {
-        throw new IllegalMonitorStateException("illegal ");
-      }
-      return 10;
-    };
+    TestHelper testHelper = mock(TestHelper.class);
+    when(testHelper.thenGet()).thenThrow(new IllegalArgumentException("illegal "));
 
     expectedException.expect(RuntimeException.class);
     expectedException.expectMessage("illegal run time");
-    Try.toGet(supplier)
+    Try.toGet(testHelper::thenGet)
             .ifRaises(IllegalArgumentException.class, IllegalStateException.class, IllegalMonitorStateException.class)
             .thenRethrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
             .done();
@@ -635,16 +514,11 @@ public class TryToGetTest {
 
   @Test
   public void try_toGetThenThrowFinallyDone_throwExceptionFinallyCalled_whenExceptionIsRaised() {
-    Supplier<Integer> supplier = () -> {
-      if (true) {
-        throw new IllegalArgumentException("illegal ");
-      }
-      return 10;
-    };
-
     TestHelper testHelper = mock(TestHelper.class);
+    when(testHelper.thenGet()).thenThrow(new IllegalArgumentException("illegal "));
+
     try {
-      Try.toGet(supplier)
+      Try.toGet(testHelper::thenGet)
               .ifRaises(RuntimeException.class)
               .thenRethrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
               .finallyDone(testHelper::finallCallMe);
@@ -658,16 +532,10 @@ public class TryToGetTest {
 
   @Test
   public void try_toGetThenThrowFinallyDone_throwExceptionFinallyCalled_whenExceptionIsRaised_whenTwoExceptionsAreHandled() {
-    Supplier<Integer> supplier = () -> {
-      if (true) {
-        throw new IllegalArgumentException("illegal ");
-      }
-      return 10;
-    };
-
     TestHelper testHelper = mock(TestHelper.class);
+    when(testHelper.thenGet()).thenThrow(new IllegalArgumentException("illegal "));
     try {
-      Try.toGet(supplier)
+      Try.toGet(testHelper::thenGet)
               .ifRaises(IllegalArgumentException.class, IllegalStateException.class)
               .thenRethrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
               .finallyDone(testHelper::finallCallMe);
@@ -681,16 +549,10 @@ public class TryToGetTest {
 
   @Test
   public void try_toGetThenThrowFinallyDone_throwExceptionFinallyCalled_whenExceptionIsRaised_whenThreeExceptionsAreHandled() {
-    Supplier<Integer> supplier = () -> {
-      if (true) {
-        throw new IllegalArgumentException("illegal ");
-      }
-      return 10;
-    };
-
     TestHelper testHelper = mock(TestHelper.class);
+    when(testHelper.thenGet()).thenThrow(new IllegalArgumentException("illegal "));
     try {
-      Try.toGet(supplier)
+      Try.toGet(testHelper::thenGet)
               .ifRaises(IllegalArgumentException.class, IllegalStateException.class, IllegalMonitorStateException.class)
               .thenRethrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
               .finallyDone(testHelper::finallCallMe);
@@ -704,16 +566,10 @@ public class TryToGetTest {
 
   @Test
   public void try_toGetThenThrowFinallyDone_throwExceptionFinallyCalled_whenSecondExceptionIsRaised_whenThreeExceptionsAreHandled() {
-    Supplier<Integer> supplier = () -> {
-      if (true) {
-        throw new IllegalStateException("illegal ");
-      }
-      return 10;
-    };
-
     TestHelper testHelper = mock(TestHelper.class);
+    when(testHelper.thenGet()).thenThrow(new IllegalArgumentException("illegal "));
     try {
-      Try.toGet(supplier)
+      Try.toGet(testHelper::thenGet)
               .ifRaises(IllegalArgumentException.class, IllegalStateException.class, IllegalMonitorStateException.class)
               .thenRethrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
               .finallyDone(testHelper::finallCallMe);
@@ -727,16 +583,11 @@ public class TryToGetTest {
 
   @Test
   public void try_toGetThenThrowFinallyDone_throwExceptionFinallyCalled_whenThirdExceptionIsRaised_whenThreeExceptionsAreHandled() {
-    Supplier<Integer> supplier = () -> {
-      if (true) {
-        throw new IllegalMonitorStateException("illegal ");
-      }
-      return 10;
-    };
-
     TestHelper testHelper = mock(TestHelper.class);
+    when(testHelper.thenGet()).thenThrow(new IllegalArgumentException("illegal "));
+
     try {
-      Try.toGet(supplier)
+      Try.toGet(testHelper::thenGet)
               .ifRaises(IllegalArgumentException.class, IllegalStateException.class, IllegalMonitorStateException.class)
               .thenRethrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
               .finallyDone(testHelper::finallCallMe);
@@ -749,8 +600,8 @@ public class TryToGetTest {
   }
 
   static class TestHelper {
-    void thenCallMe() {
-      System.out.println("then call me");
+    Integer thenGet() {
+      return 10;
     }
 
     void elseCallMe() {
