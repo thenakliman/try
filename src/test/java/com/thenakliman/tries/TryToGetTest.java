@@ -7,7 +7,6 @@ import org.junit.rules.ExpectedException;
 import java.awt.*;
 import java.awt.geom.IllegalPathStateException;
 import java.nio.channels.IllegalSelectorException;
-import java.util.function.Supplier;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -389,7 +388,7 @@ public class TryToGetTest {
   public void try_toGetThenRethrow_returnGetValue_whenExceptionIsNotRaised() {
     Integer done = Try.toGet(() -> 10)
             .ifRaises(RuntimeException.class)
-            .thenRethrow((exception) -> new IllegalArgumentException(""))
+            .thenThrow((exception) -> new IllegalArgumentException(""))
             .done();
     assertThat(done, is(10));
   }
@@ -398,7 +397,7 @@ public class TryToGetTest {
   public void try_toGetThenRethrow_returnGetValue_whenExceptionIsNotRaised_whenTwoExceptionsAreHandled() {
     Integer done = Try.toGet(() -> 10)
             .ifRaises(IllegalArgumentException.class, IllegalStateException.class)
-            .thenRethrow((exception) -> new IllegalArgumentException(""))
+            .thenThrow((exception) -> new IllegalArgumentException(""))
             .done();
     assertThat(done, is(10));
   }
@@ -407,7 +406,7 @@ public class TryToGetTest {
   public void try_toGetThenRethrow_returnGetValue_whenExceptionIsNotRaised_whenThreeExceptionsAreHandled() {
     Integer done = Try.toGet(() -> 10)
             .ifRaises(IllegalArgumentException.class, IllegalStateException.class, IllegalPathStateException.class)
-            .thenRethrow((exception) -> new IllegalArgumentException(""))
+            .thenThrow((exception) -> new IllegalArgumentException(""))
             .done();
     assertThat(done, is(10));
   }
@@ -417,7 +416,7 @@ public class TryToGetTest {
     TestHelper testHelper = mock(TestHelper.class);
     Integer done = Try.toGet(() -> 10)
             .ifRaises(RuntimeException.class)
-            .thenRethrow((exception) -> new IllegalArgumentException(""))
+            .thenThrow((exception) -> new IllegalArgumentException(""))
             .finallyDone(testHelper::finallCallMe);
 
     assertThat(done, is(10));
@@ -429,7 +428,7 @@ public class TryToGetTest {
     TestHelper testHelper = mock(TestHelper.class);
     Integer done = Try.toGet(() -> 10)
             .ifRaises(RuntimeException.class)
-            .thenRethrow((exception) -> new IllegalArgumentException(""))
+            .thenThrow((exception) -> new IllegalArgumentException(""))
             .finallyDone(testHelper::finallCallMe);
 
     assertThat(done, is(10));
@@ -441,7 +440,7 @@ public class TryToGetTest {
     TestHelper testHelper = mock(TestHelper.class);
     Integer done = Try.toGet(() -> 10)
             .ifRaises(RuntimeException.class)
-            .thenRethrow((exception) -> new IllegalArgumentException(""))
+            .thenThrow((exception) -> new IllegalArgumentException(""))
             .finallyDone(testHelper::finallCallMe);
 
     assertThat(done, is(10));
@@ -456,7 +455,7 @@ public class TryToGetTest {
     expectedException.expectMessage("illegal run time");
     Try.toGet(testHelper::thenGet)
             .ifRaises(RuntimeException.class)
-            .thenRethrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
+            .thenThrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
             .done();
   }
 
@@ -469,7 +468,7 @@ public class TryToGetTest {
     expectedException.expectMessage("illegal run time");
     Try.toGet(testHelper::thenGet)
             .ifRaises(IllegalArgumentException.class, IllegalStateException.class)
-            .thenRethrow((exception) -> new RuntimeException(exception.getMessage() + " run time"))
+            .thenThrow((exception) -> new RuntimeException(exception.getMessage() + " run time"))
             .done();
   }
 
@@ -482,7 +481,7 @@ public class TryToGetTest {
     expectedException.expectMessage("illegal run time");
     Try.toGet(testHelper::thenGet)
             .ifRaises(IllegalArgumentException.class, IllegalStateException.class, IllegalAccessException.class)
-            .thenRethrow((exception) -> new RuntimeException(exception.getMessage() + " run time"))
+            .thenThrow((exception) -> new RuntimeException(exception.getMessage() + " run time"))
             .done();
   }
 
@@ -495,7 +494,7 @@ public class TryToGetTest {
     expectedException.expectMessage("illegal run time");
     Try.toGet(testHelper::thenGet)
             .ifRaises(IllegalArgumentException.class, IllegalStateException.class, IllegalAccessException.class)
-            .thenRethrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
+            .thenThrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
             .done();
   }
 
@@ -508,7 +507,7 @@ public class TryToGetTest {
     expectedException.expectMessage("illegal run time");
     Try.toGet(testHelper::thenGet)
             .ifRaises(IllegalArgumentException.class, IllegalStateException.class, IllegalMonitorStateException.class)
-            .thenRethrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
+            .thenThrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
             .done();
   }
 
@@ -520,7 +519,7 @@ public class TryToGetTest {
     try {
       Try.toGet(testHelper::thenGet)
               .ifRaises(RuntimeException.class)
-              .thenRethrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
+              .thenThrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
               .finallyDone(testHelper::finallCallMe);
       fail("Expected RuntimeException.");
     } catch (RuntimeException exception) {
@@ -537,7 +536,7 @@ public class TryToGetTest {
     try {
       Try.toGet(testHelper::thenGet)
               .ifRaises(IllegalArgumentException.class, IllegalStateException.class)
-              .thenRethrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
+              .thenThrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
               .finallyDone(testHelper::finallCallMe);
       fail("Expected RuntimeException.");
     } catch (RuntimeException exception) {
@@ -554,7 +553,7 @@ public class TryToGetTest {
     try {
       Try.toGet(testHelper::thenGet)
               .ifRaises(IllegalArgumentException.class, IllegalStateException.class, IllegalMonitorStateException.class)
-              .thenRethrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
+              .thenThrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
               .finallyDone(testHelper::finallCallMe);
       fail("Expected RuntimeException.");
     } catch (RuntimeException exception) {
@@ -571,7 +570,7 @@ public class TryToGetTest {
     try {
       Try.toGet(testHelper::thenGet)
               .ifRaises(IllegalArgumentException.class, IllegalStateException.class, IllegalMonitorStateException.class)
-              .thenRethrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
+              .thenThrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
               .finallyDone(testHelper::finallCallMe);
       fail("Expected RuntimeException.");
     } catch (RuntimeException exception) {
@@ -589,7 +588,7 @@ public class TryToGetTest {
     try {
       Try.toGet(testHelper::thenGet)
               .ifRaises(IllegalArgumentException.class, IllegalStateException.class, IllegalMonitorStateException.class)
-              .thenRethrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
+              .thenThrow((exception) -> new RuntimeException(exception.getMessage() + "run time"))
               .finallyDone(testHelper::finallCallMe);
       fail("Expected RuntimeException.");
     } catch (RuntimeException exception) {

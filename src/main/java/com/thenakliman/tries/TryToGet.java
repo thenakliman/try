@@ -70,7 +70,7 @@ class TryToGet<T> {
       return new Executor<T>(this.valueSupplier, unmodifiableList(registeredExceptionHandlers), DO_NOTHING_CONSUMER);
     }
 
-    public Executor<T> thenRethrow(final Function<Throwable, ? extends Throwable> exceptionGetter) {
+    public Executor<T> thenThrow(final Function<Throwable, ? extends Throwable> exceptionGetter) {
       final List<IExceptionHandler<T>> registeredExceptionHandlers = new ArrayList<>(this.exceptionHandlers);
       final List<IExceptionHandler<T>> exceptionThrowers = this.exceptionClass.stream()
               .map(exceptionClass -> new ExceptionThrower<T>(exceptionClass, exceptionGetter))

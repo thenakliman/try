@@ -56,7 +56,7 @@ class TryToCall {
       return new Executor(this.callable, Collections.unmodifiableList(registeredExceptionHandlers), DO_NOTHING);
     }
 
-    public Executor thenRethrow(final Function<Throwable, ? extends Throwable> exceptionFunction) {
+    public Executor thenThrow(final Function<Throwable, ? extends Throwable> exceptionFunction) {
       final ArrayList<IExceptionHandler> registeredExceptionHandlers = new ArrayList<>(this.exceptionsHandlers);
       final List<IExceptionHandler> exceptionHandlers = this.exceptionClasses.stream()
               .map(exceptionClass -> new ExceptionThrower(exceptionClass, exceptionFunction))
