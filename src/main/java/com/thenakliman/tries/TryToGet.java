@@ -200,17 +200,17 @@ class TryToGet<T> {
       return new ThenHandler<>(this.valueSupplier, singletonList(exceptionClass), this.exceptionHandlers);
     }
 
-    public <X extends Throwable> ThenHandler<T> elseIfRaises(final Class<? extends X> exceptionClass1,
-                                                             final Class<? extends X> exceptionClass2,
-                                                             final Class<? extends X> exceptionClass3) throws X {
+    public <X extends Throwable, Y extends Throwable, Z extends Throwable> ThenHandler<T> elseIfRaises(final Class<? extends X> exceptionClass1,
+                                                                                                       final Class<? extends Y> exceptionClass2,
+                                                                                                       final Class<? extends Z> exceptionClass3) throws X, Y, Z {
       return new ThenHandler<>(
               this.valueSupplier,
               Arrays.asList(exceptionClass1, exceptionClass2, exceptionClass3),
               this.exceptionHandlers);
     }
 
-    public <X extends Throwable> ThenHandler<T> elseIfRaises(final Class<? extends X> exceptionClass1,
-                                                             final Class<? extends X> exceptionClass2) throws X {
+    public <X extends Throwable, Y extends Throwable> ThenHandler<T> elseIfRaises(final Class<? extends X> exceptionClass1,
+                                                                                  final Class<? extends Y> exceptionClass2) throws X, Y {
       return new ThenHandler<>(this.valueSupplier, Arrays.asList(exceptionClass1, exceptionClass2), this.exceptionHandlers);
     }
   }
