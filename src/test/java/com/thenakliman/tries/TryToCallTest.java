@@ -456,7 +456,7 @@ public class TryToCallTest {
   }
 
   @Test
-  public void try_tryToCallThenCallElseCallFinallyDone_finallyDoneIsCalledElseNotCalled_whenExceptionIsRaised() {
+  public void try_tryToCallThenCallElseCallFinallyDone_finallyDoneIsCalledElseNotCalled_whenExceptionIsRaised() throws IOException {
     TestHelper testHelper = mock(TestHelper.class);
     doThrow(new IllegalArgumentException("some argument")).when(testHelper).throwException();
 
@@ -467,7 +467,7 @@ public class TryToCallTest {
             .thenCall((expectedException) -> {
             })
             .elseIfRaises(RuntimeException.class)
-            .thenThrow((exception -> new RuntimeException()))
+            .thenThrow((exception -> new IOException()))
             .elseCall(testHelper::elseCallMe)
             .finallyDone(testHelper::finallCallMe);
 
@@ -1294,7 +1294,7 @@ public class TryToCallTest {
               .elseCall(testHelper::elseCallMe)
               .done();
       fail("IllegalArgumentException expected but did not raise");
-    } catch (IllegalArgumentException | IOException exception) {
+    } catch (IllegalArgumentException exception) {
       assertThat(exception.getMessage(), is("some argument some value"));
     }
 
