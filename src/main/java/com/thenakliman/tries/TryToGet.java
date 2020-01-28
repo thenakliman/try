@@ -1,7 +1,6 @@
 package com.thenakliman.tries;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -10,7 +9,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static com.thenakliman.tries.SneakyThrower.sneakyThrow;
-import static java.util.Collections.*;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableList;
 
 class TryToGet<T> {
   final private Supplier<T> valueSupplier;
@@ -19,29 +20,9 @@ class TryToGet<T> {
     this.valueSupplier = valueSupplier;
   }
 
-  <X extends Throwable> ThenHandler<T> ifRaises(final Class<? extends X> exceptionClass) throws X {
-    return new ThenHandler<T>(valueSupplier, singletonList(exceptionClass), emptyList());
-  }
-
-  <X extends Throwable, Y extends Throwable> ThenHandler<T> ifRaises(
-          final Class<? extends X> exceptionClass1,
-          final Class<? extends Y> exceptionClass2) throws X, Y {
-
-    return new ThenHandler<>(
-            valueSupplier,
-            Arrays.asList(exceptionClass1, exceptionClass2),
-            emptyList());
-  }
-
-  <X extends Throwable, Y extends Throwable, Z extends Throwable> ThenHandler<T> ifRaises(
-          final Class<? extends X> exceptionClass1,
-          final Class<? extends Y> exceptionClass2,
-          final Class<? extends Y> exceptionClass3) throws X, Y, Z {
-
-    return new ThenHandler<>(
-            valueSupplier,
-            Arrays.asList(exceptionClass1, exceptionClass2, exceptionClass3),
-            emptyList());
+  @SuppressWarnings("unchecked")
+  ThenHandler<T> ifRaises(final Class<? extends Throwable>... exceptionClasses) {
+    return new ThenHandler<T>(valueSupplier, asList(exceptionClasses), emptyList());
   }
 
   public static class ThenHandler<T> {
@@ -195,22 +176,9 @@ class TryToGet<T> {
               elseConsumer);
     }
 
-    public <X extends Throwable> ThenHandler<T> elseIfRaises(final Class<? extends X> exceptionClass) throws X {
-      return new ThenHandler<>(this.valueSupplier, singletonList(exceptionClass), this.exceptionHandlers);
-    }
-
-    public <X extends Throwable, Y extends Throwable, Z extends Throwable> ThenHandler<T> elseIfRaises(final Class<? extends X> exceptionClass1,
-                                                                                                       final Class<? extends Y> exceptionClass2,
-                                                                                                       final Class<? extends Z> exceptionClass3) throws X, Y, Z {
-      return new ThenHandler<>(
-              this.valueSupplier,
-              Arrays.asList(exceptionClass1, exceptionClass2, exceptionClass3),
-              this.exceptionHandlers);
-    }
-
-    public <X extends Throwable, Y extends Throwable> ThenHandler<T> elseIfRaises(final Class<? extends X> exceptionClass1,
-                                                                                  final Class<? extends Y> exceptionClass2) throws X, Y {
-      return new ThenHandler<>(this.valueSupplier, Arrays.asList(exceptionClass1, exceptionClass2), this.exceptionHandlers);
+    @SuppressWarnings("unchecked")
+    public ThenHandler<T> elseIfRaises(final Class<? extends Throwable>... exceptionClasses) {
+      return new ThenHandler<>(this.valueSupplier, asList(exceptionClasses), this.exceptionHandlers);
     }
   }
 }

@@ -9,6 +9,7 @@ import static com.thenakliman.tries.Constant.DO_NOTHING;
 import static com.thenakliman.tries.SneakyThrower.sneakyThrow;
 import static com.thenakliman.tries.Utils.closeResources;
 import static com.thenakliman.tries.Utils.executeCallable;
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 
 class TryToCall {
@@ -29,7 +30,7 @@ class TryToCall {
   ThenHandler ifRaises(final Class<? extends Throwable>... exceptionClasses) {
     return new ThenHandler(
             this.callable,
-            Arrays.stream(exceptionClasses).collect(Collectors.toList()),
+            asList(exceptionClasses),
             emptyList(),
             this.resources);
   }
@@ -200,7 +201,7 @@ class TryToCall {
     public ThenHandler elseIfRaises(final Class<? extends Throwable>... exceptionClasses) {
       return new ThenHandler(
               this.callable,
-              Arrays.stream(exceptionClasses).collect(Collectors.toList()),
+              Arrays.asList(exceptionClasses),
               this.exceptions,
               this.resources);
     }
