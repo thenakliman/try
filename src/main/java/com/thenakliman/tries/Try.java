@@ -10,4 +10,8 @@ public class Try {
   public static <T> TryToGet<T> toGet(Supplier<T> supplier) {
     return new TryToGet<>(supplier);
   }
+
+  public static TryWithResources withResources(AutoCloseable... resources) {
+    return new TryWithResources(resources);
+  }
 }

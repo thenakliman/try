@@ -7,32 +7,47 @@ import java.util.stream.Collectors;
 
 import static com.thenakliman.tries.Constant.DO_NOTHING;
 import static com.thenakliman.tries.SneakyThrower.sneakyThrow;
+import static com.thenakliman.tries.Utils.closeResources;
 import static com.thenakliman.tries.Utils.executeCallable;
 import static java.util.Collections.emptyList;
 
 class TryToCall {
   final private Callable callable;
+  final private AutoCloseable[] resources;
 
   TryToCall(final Callable callable) {
     this.callable = callable;
+    this.resources = new AutoCloseable[0];
+  }
+
+  TryToCall(final Callable callable, final AutoCloseable[] resources) {
+    this.callable = callable;
+    this.resources = resources;
   }
 
   @SuppressWarnings("unchecked")
   ThenHandler ifRaises(final Class<? extends Throwable>... exceptionClasses) {
-    return new ThenHandler(this.callable, Arrays.stream(exceptionClasses).collect(Collectors.toList()), emptyList());
+    return new ThenHandler(
+            this.callable,
+            Arrays.stream(exceptionClasses).collect(Collectors.toList()),
+            emptyList(),
+            this.resources);
   }
 
   public static class ThenHandler {
     final private Callable callable;
     final private List<Class<? extends Throwable>> exceptionClasses;
     final private List<IExceptionHandler> exceptionsHandlers;
+    final private AutoCloseable[] resources;
 
     public ThenHandler(final Callable callable,
                        final List<Class<? extends Throwable>> exceptionClasses,
-                       final List<IExceptionHandler> exceptionsHandlers) {
+                       final List<IExceptionHandler> exceptionsHandlers,
+                       final AutoCloseable[] resources) {
       this.callable = callable;
       this.exceptionClasses = exceptionClasses;
       this.exceptionsHandlers = exceptionsHandlers;
+      this.resources = resources;
     }
 
     public Executor thenCall(final Consumer<Throwable> thenConsumer) {
@@ -41,7 +56,11 @@ class TryToCall {
               .map(exceptionClass -> new ExceptionConsumer(exceptionClass, thenConsumer))
               .collect(Collectors.toList());
       registeredExceptionHandlers.addAll(exceptionHandlers);
-      return new Executor(this.callable, Collections.unmodifiableList(registeredExceptionHandlers), DO_NOTHING);
+      return new Executor(
+              this.callable,
+              Collections.unmodifiableList(registeredExceptionHandlers),
+              DO_NOTHING,
+              this.resources);
     }
 
     public <E extends Throwable> Executor thenThrow(final Function<Throwable, ? extends E> exceptionFunction) throws E {
@@ -50,7 +69,11 @@ class TryToCall {
               .map(exceptionClass -> new ExceptionThrower(exceptionClass, exceptionFunction))
               .collect(Collectors.toList());
       registeredExceptionHandlers.addAll(exceptionHandlers);
-      return new Executor(this.callable, Collections.unmodifiableList(registeredExceptionHandlers), DO_NOTHING);
+      return new Executor(
+              this.callable,
+              Collections.unmodifiableList(registeredExceptionHandlers),
+              DO_NOTHING,
+              this.resources);
     }
   }
 
@@ -113,13 +136,16 @@ class TryToCall {
     final private Callable callable;
     final private List<IExceptionHandler> exceptions;
     final private Callable elseCallable;
+    final private AutoCloseable[] resources;
 
     public Executor(final Callable callable,
                     final List<IExceptionHandler> exceptions,
-                    final Callable doNothing) {
+                    final Callable doNothing,
+                    final AutoCloseable[] resources) {
       this.callable = callable;
       this.exceptions = exceptions;
       this.elseCallable = doNothing;
+      this.resources = resources;
     }
 
     @Override
@@ -133,12 +159,14 @@ class TryToCall {
       }
 
       if (success) {
+        closeResources(this.resources);
         executeCallable(this.elseCallable);
       }
     }
 
-    private void handleException(Throwable exception) {
-      Optional<IExceptionHandler> matchedException = this.exceptions.stream()
+    private void handleException(final Throwable exception) {
+      closeResources(this.resources);
+      final Optional<IExceptionHandler> matchedException = this.exceptions.stream()
               .filter((exceptionHandler -> exceptionHandler.getThrowableClass().isInstance(exception)))
               .findFirst();
       if (matchedException.isPresent()) {
@@ -157,6 +185,9 @@ class TryToCall {
       } catch (Throwable exception) {
         handleException(exception);
       } finally {
+        if (success) {
+          closeResources(this.resources);
+        }
         executeCallable(finallyCallable);
       }
 
@@ -170,12 +201,13 @@ class TryToCall {
       return new ThenHandler(
               this.callable,
               Arrays.stream(exceptionClasses).collect(Collectors.toList()),
-              this.exceptions);
+              this.exceptions,
+              this.resources);
     }
 
     @Override
     public IExecutor elseCall(final Callable elseCallable) {
-      return new Executor(this.callable, this.exceptions, elseCallable);
+      return new Executor(this.callable, this.exceptions, elseCallable, this.resources);
     }
   }
 }

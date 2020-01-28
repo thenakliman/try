@@ -10,7 +10,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static com.thenakliman.tries.SneakyThrower.sneakyThrow;
-import static com.thenakliman.tries.Utils.executeCallable;
 import static java.util.Collections.*;
 
 class TryToGet<T> {
@@ -182,7 +181,7 @@ class TryToGet<T> {
       } catch (Throwable exception) {
         return handleException(exception);
       } finally {
-        executeCallable(finallyCallable);
+        Utils.executeCallable(finallyCallable);
       }
       this.elseConsumer.accept(value);
       return value;
