@@ -21,7 +21,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
-public class TryWithResourceTest {
+public class TryToCallWithResourcesTest {
   @Rule
   public ExpectedException expectedException = ExpectedException.none();
 
