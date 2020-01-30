@@ -16,14 +16,14 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
-public class TryToGetWithResourcesTest {
+public class TryToGetWithResourcesR1R2Test {
 
   @Rule
   public ExpectedException expectedException = ExpectedException.none();
 
-  private TryToCallWithResourcesTest.MyResource resource1 = mock(TryToCallWithResourcesTest.MyResource.class);
+  private TryToCallWithResourcesR1R2Test.MyResource resource1 = mock(TryToCallWithResourcesR1R2Test.MyResource.class);
 
-  private TryToCallWithResourcesTest.MyResource resource2 = mock(TryToCallWithResourcesTest.MyResource.class);
+  private TryToCallWithResourcesR1R2Test.MyResource resource2 = mock(TryToCallWithResourcesR1R2Test.MyResource.class);
 
   @After
   public void verifyResourcesAreClosed() throws Exception {
