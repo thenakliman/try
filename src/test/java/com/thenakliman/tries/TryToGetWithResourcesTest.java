@@ -32,7 +32,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGet_returnGetValue_whenExceptionIsNotRaised() {
+  public void try_withResourcesR1R2ToGetThenGet_returnGetValue_whenExceptionIsNotRaised() {
     Integer done = Try.withResources(resource1, resource2)
             .toGet(() -> 10)
             .ifRaises(RuntimeException.class)
@@ -42,7 +42,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGet_returnGetValue_whenExceptionIsNotRaised_whenTwoExceptionsAreHandled() {
+  public void try_withResourcesR1R2ToGetThenGet_returnGetValue_whenExceptionIsNotRaised_whenTwoExceptionsAreHandled() {
     Integer done = Try.withResources(resource1, resource2)
             .toGet(() -> 10)
             .ifRaises(IllegalArgumentException.class, IllegalSelectorException.class)
@@ -52,7 +52,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGet_returnGetValue_whenExceptionIsNotRaised_whenThreeExceptionsAreHandled() {
+  public void try_withResourcesR1R2ToGetThenGet_returnGetValue_whenExceptionIsNotRaised_whenThreeExceptionsAreHandled() {
     Integer done = Try.withResources(resource1, resource2)
             .toGet(() -> 10)
             .ifRaises(IllegalArgumentException.class, IllegalSelectorException.class, IllegalThreadStateException.class)
@@ -62,7 +62,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseCall_returnGetValueElseCalled_whenExceptionIsNotRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseCall_returnGetValueElseCalled_whenExceptionIsNotRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     Integer expValue = Try.withResources(resource1, resource2)
             .toGet(() -> 10)
@@ -75,7 +75,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseCall_returnGetValueElseCalled_whenExceptionIsNotRaised_whenTwoExceptionsAreHandled() {
+  public void try_withResourcesR1R2ToGetThenGetElseCall_returnGetValueElseCalled_whenExceptionIsNotRaised_whenTwoExceptionsAreHandled() {
     TestHelper testHelper = mock(TestHelper.class);
     Integer expValue = Try.withResources(resource1, resource2)
             .toGet(() -> 10)
@@ -88,7 +88,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseCall_returnGetValueElseCalled_whenExceptionIsNotRaised_whenThreeExceptionsAreHandled() {
+  public void try_withResourcesR1R2ToGetThenGetElseCall_returnGetValueElseCalled_whenExceptionIsNotRaised_whenThreeExceptionsAreHandled() {
     TestHelper testHelper = mock(TestHelper.class);
     Integer expValue = Try.withResources(resource1, resource2)
             .toGet(() -> 10)
@@ -101,7 +101,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetFinallyDone_returnGetValueFinallyCalled_whenExceptionIsNotRaised() {
+  public void try_withResourcesR1R2ToGetThenGetFinallyDone_returnGetValueFinallyCalled_whenExceptionIsNotRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     Integer done = Try.withResources(resource1, resource2)
             .toGet(() -> 10)
@@ -113,7 +113,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetFinallyDone_returnGetValueFinallyCalled_whenExceptionIsNotRaised_whenTwoExceptionsAreHandled() {
+  public void try_withResourcesR1R2ToGetThenGetFinallyDone_returnGetValueFinallyCalled_whenExceptionIsNotRaised_whenTwoExceptionsAreHandled() {
     TestHelper testHelper = mock(TestHelper.class);
     Integer done = Try.withResources(resource1, resource2)
             .toGet(() -> 10)
@@ -125,7 +125,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetFinallyDone_returnGetValueFinallyCalled_whenExceptionIsNotRaised_whenThreeExceptionsAreHandled() {
+  public void try_withResourcesR1R2ToGetThenGetFinallyDone_returnGetValueFinallyCalled_whenExceptionIsNotRaised_whenThreeExceptionsAreHandled() {
     TestHelper testHelper = mock(TestHelper.class);
     Integer done = Try.withResources(resource1, resource2)
             .toGet(() -> 10)
@@ -137,7 +137,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseCallFinallyDone_returnGetValueFinallyCalledElseCalled_whenExceptionIsNotRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseCallFinallyDone_returnGetValueFinallyCalledElseCalled_whenExceptionIsNotRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     Integer done = Try.withResources(resource1, resource2)
             .toGet(() -> 10)
@@ -151,7 +151,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseCallFinallyDone_returnGetValueFinallyCalledElseCalled_whenExceptionIsNotRaised_whenTwoExceptionsAreHandled() throws IllegalAccessException {
+  public void try_withResourcesR1R2ToGetThenGetElseCallFinallyDone_returnGetValueFinallyCalledElseCalled_whenExceptionIsNotRaised_whenTwoExceptionsAreHandled() throws IllegalAccessException {
     TestHelper testHelper = mock(TestHelper.class);
     Integer done = Try.withResources(resource1, resource2)
             .toGet(() -> 10)
@@ -165,7 +165,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseCallFinallyDone_returnGetValueFinallyCalledElseCalled_whenExceptionIsNotRaised_whenThreeExceptionsAreHandled() throws Exception {
+  public void try_withResourcesR1R2ToGetThenGetElseCallFinallyDone_returnGetValueFinallyCalledElseCalled_whenExceptionIsNotRaised_whenThreeExceptionsAreHandled() throws Exception {
     TestHelper testHelper = mock(TestHelper.class);
     Integer done = Try.withResources(resource1, resource2)
             .toGet(() -> 10)
@@ -179,7 +179,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGet_returnThenValue_whenExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenGet_returnThenValue_whenExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(IllegalArgumentException.class);
     Integer done = Try.withResources(resource1, resource2)
@@ -191,7 +191,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGet_returnThenValue_whenFirstExceptionIsRaised_whenTwoExceptionsAreHandled() {
+  public void try_withResourcesR1R2ToGetThenGet_returnThenValue_whenFirstExceptionIsRaised_whenTwoExceptionsAreHandled() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(IllegalArgumentException.class);
 
@@ -204,7 +204,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGet_returnThenValue_whenSecondExceptionIsRaised_whenThreeExceptionsAreHandled() {
+  public void try_withResourcesR1R2ToGetThenGet_returnThenValue_whenSecondExceptionIsRaised_whenThreeExceptionsAreHandled() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(IllegalStateException.class);
 
@@ -217,7 +217,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGet_returnThenValue_whenThirdExceptionIsRaised_whenThreeExceptionsAreHandled() {
+  public void try_withResourcesR1R2ToGetThenGet_returnThenValue_whenThirdExceptionIsRaised_whenThreeExceptionsAreHandled() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(IllegalPathStateException.class);
 
@@ -230,7 +230,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseCall_returnThenValue_whenExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseCall_returnThenValue_whenExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(IllegalArgumentException.class);
 
@@ -245,7 +245,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseCall_returnThenValue_whenExceptionFirstIsRaised_whenTwoExceptionsAreHandled() {
+  public void try_withResourcesR1R2ToGetThenGetElseCall_returnThenValue_whenExceptionFirstIsRaised_whenTwoExceptionsAreHandled() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(IllegalArgumentException.class);
     Integer done = Try.withResources(resource1, resource2)
@@ -259,7 +259,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseCall_returnThenValue_whenExceptionSecondIsRaised_whenTwoExceptionsAreHandled() {
+  public void try_withResourcesR1R2ToGetThenGetElseCall_returnThenValue_whenExceptionSecondIsRaised_whenTwoExceptionsAreHandled() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(IllegalPathStateException.class);
     Integer done = Try.withResources(resource1, resource2)
@@ -273,7 +273,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseCall_returnThenValue_whenExceptionSecondIsRaised_whenThreeExceptionsAreHandled() {
+  public void try_withResourcesR1R2ToGetThenGetElseCall_returnThenValue_whenExceptionSecondIsRaised_whenThreeExceptionsAreHandled() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(IllegalPathStateException.class);
     Integer done = Try.withResources(resource1, resource2)
@@ -287,7 +287,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseCall_returnThenValue_whenExceptionThirdIsRaised_whenThreeExceptionsAreHandled() {
+  public void try_withResourcesR1R2ToGetThenGetElseCall_returnThenValue_whenExceptionThirdIsRaised_whenThreeExceptionsAreHandled() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(IllegalMonitorStateException.class);
     Integer done = Try.withResources(resource1, resource2)
@@ -301,7 +301,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetFinallyCalled_returnThenValueFinallyCalled_whenExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenGetFinallyCalled_returnThenValueFinallyCalled_whenExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(IllegalArgumentException.class);
     Integer done = Try.withResources(resource1, resource2)
@@ -314,7 +314,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetFinallyCalled_returnThenValueFinallyCalled_whenFirstExceptionIsRaised_whenTwoExceptionsAreRaised() {
+  public void try_withResourcesR1R2ToGetThenGetFinallyCalled_returnThenValueFinallyCalled_whenFirstExceptionIsRaised_whenTwoExceptionsAreRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(IllegalArgumentException.class);
     Integer done = Try.withResources(resource1, resource2)
@@ -327,7 +327,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetFinallyCalled_returnThenValueFinallyCalled_whenSecondExceptionIsRaised_whenTwoExceptionsAreRaised() {
+  public void try_withResourcesR1R2ToGetThenGetFinallyCalled_returnThenValueFinallyCalled_whenSecondExceptionIsRaised_whenTwoExceptionsAreRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(IllegalArgumentException.class);
     Integer done = Try.withResources(resource1, resource2)
@@ -340,7 +340,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetFinallyCalled_returnThenValueFinallyCalled_whenSecondExceptionIsRaised_whenThreeExceptionsAreRaised() {
+  public void try_withResourcesR1R2ToGetThenGetFinallyCalled_returnThenValueFinallyCalled_whenSecondExceptionIsRaised_whenThreeExceptionsAreRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(IllegalSelectorException.class);
     Integer done = Try.withResources(resource1, resource2)
@@ -353,7 +353,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseCallFinallyCall_returnThenValueFinallyCalled_whenExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseCallFinallyCall_returnThenValueFinallyCalled_whenExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(IllegalArgumentException.class);
     Integer done = Try.withResources(resource1, resource2)
@@ -368,7 +368,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseCallFinallyCall_returnThenValueFinallyCalled_whenFirstExceptionIsRaised_whenTwoExceptionsAreRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseCallFinallyCall_returnThenValueFinallyCalled_whenFirstExceptionIsRaised_whenTwoExceptionsAreRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(IllegalMonitorStateException.class);
     Integer done = Try.withResources(resource1, resource2)
@@ -383,7 +383,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseCallFinallyCall_returnThenValueFinallyCalled_whenSecondExceptionIsRaised_whenTwoExceptionsAreRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseCallFinallyCall_returnThenValueFinallyCalled_whenSecondExceptionIsRaised_whenTwoExceptionsAreRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalStateException("illegal "));
     Integer done = Try.withResources(resource1, resource2)
@@ -398,7 +398,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseCallFinallyCall_returnThenValueFinallyCalled_whenSecondExceptionIsRaised_whenThreeExceptionsAreRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseCallFinallyCall_returnThenValueFinallyCalled_whenSecondExceptionIsRaised_whenThreeExceptionsAreRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(IllegalStateException.class);
     Integer done = Try.withResources(resource1, resource2)
@@ -413,7 +413,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseCallFinallyCall_returnThenValueFinallyCalled_whenThirdExceptionIsRaised_whenThreeExceptionsAreRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseCallFinallyCall_returnThenValueFinallyCalled_whenThirdExceptionIsRaised_whenThreeExceptionsAreRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(IllegalArgumentException.class);
     Integer done = Try.withResources(resource1, resource2)
@@ -428,7 +428,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenRethrow_returnGetValue_whenExceptionIsNotRaised() {
+  public void try_withResourcesR1R2ToGetThenRethrow_returnGetValue_whenExceptionIsNotRaised() {
     Integer done = Try.withResources(resource1, resource2)
             .toGet(() -> 10)
             .ifRaises(RuntimeException.class)
@@ -438,7 +438,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenRethrow_returnGetValue_whenExceptionIsNotRaised_whenTwoExceptionsAreHandled() {
+  public void try_withResourcesR1R2ToGetThenRethrow_returnGetValue_whenExceptionIsNotRaised_whenTwoExceptionsAreHandled() {
     Integer done = Try.withResources(resource1, resource2)
             .toGet(() -> 10)
             .ifRaises(IllegalArgumentException.class, IllegalStateException.class)
@@ -448,7 +448,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenRethrow_returnGetValue_whenExceptionIsNotRaised_whenThreeExceptionsAreHandled() {
+  public void try_withResourcesR1R2ToGetThenRethrow_returnGetValue_whenExceptionIsNotRaised_whenThreeExceptionsAreHandled() {
     Integer done = Try.withResources(resource1, resource2)
             .toGet(() -> 10)
             .ifRaises(IllegalArgumentException.class, IllegalStateException.class, IllegalPathStateException.class)
@@ -458,7 +458,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenRethrowFinallyDone_returnGetValueFinallyCalled_whenExceptionIsNotRaised() {
+  public void try_withResourcesR1R2ToGetThenRethrowFinallyDone_returnGetValueFinallyCalled_whenExceptionIsNotRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     Integer done = Try.withResources(resource1, resource2)
             .toGet(() -> 10)
@@ -471,7 +471,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenRethrowFinallyDone_returnGetValueFinallyCalled_whenExceptionIsNotRaised_whenTwoExceptionsAreHandled() {
+  public void try_withResourcesR1R2ToGetThenRethrowFinallyDone_returnGetValueFinallyCalled_whenExceptionIsNotRaised_whenTwoExceptionsAreHandled() {
     TestHelper testHelper = mock(TestHelper.class);
     Integer done = Try.withResources(resource1, resource2)
             .toGet(() -> 10)
@@ -484,7 +484,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenRethrowFinallyDone_returnGetValueFinallyCalled_whenExceptionIsNotRaised_whenThreeExceptionsAreHandled() {
+  public void try_withResourcesR1R2ToGetThenRethrowFinallyDone_returnGetValueFinallyCalled_whenExceptionIsNotRaised_whenThreeExceptionsAreHandled() {
     TestHelper testHelper = mock(TestHelper.class);
     Integer done = Try.withResources(resource1, resource2)
             .toGet(() -> 10)
@@ -497,7 +497,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrow_throwException_whenExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenThrow_throwException_whenExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalArgumentException("illegal "));
     expectedException.expect(RuntimeException.class);
@@ -510,7 +510,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrow_throwException_whenExceptionIsRaised_whenTwoExceptionsAreHandled() throws Exception {
+  public void try_withResourcesR1R2ToGetThenThrow_throwException_whenExceptionIsRaised_whenTwoExceptionsAreHandled() throws Exception {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalArgumentException("illegal"));
 
@@ -524,7 +524,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrow_throwException_whenExceptionIsRaised_whenThreeExceptionsAreHandled() throws Exception {
+  public void try_withResourcesR1R2ToGetThenThrow_throwException_whenExceptionIsRaised_whenThreeExceptionsAreHandled() throws Exception {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalArgumentException("illegal"));
 
@@ -538,7 +538,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrow_throwException_whenSecondExceptionIsRaised_whenThreeExceptionsAreHandled() throws Exception {
+  public void try_withResourcesR1R2ToGetThenThrow_throwException_whenSecondExceptionIsRaised_whenThreeExceptionsAreHandled() throws Exception {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalArgumentException("illegal "));
 
@@ -552,7 +552,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrow_throwException_whenThirdExceptionIsRaised_whenThreeExceptionsAreHandled() throws Exception {
+  public void try_withResourcesR1R2ToGetThenThrow_throwException_whenThirdExceptionIsRaised_whenThreeExceptionsAreHandled() throws Exception {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalArgumentException("illegal "));
 
@@ -566,7 +566,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowFinallyDone_throwExceptionFinallyCalled_whenExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenThrowFinallyDone_throwExceptionFinallyCalled_whenExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalArgumentException("illegal "));
 
@@ -585,7 +585,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowFinallyDone_throwExceptionFinallyCalled_whenExceptionIsRaised_whenTwoExceptionsAreHandled() {
+  public void try_withResourcesR1R2ToGetThenThrowFinallyDone_throwExceptionFinallyCalled_whenExceptionIsRaised_whenTwoExceptionsAreHandled() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalArgumentException("illegal "));
     try {
@@ -603,7 +603,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowFinallyDone_throwExceptionFinallyCalled_whenExceptionIsRaised_whenThreeExceptionsAreHandled() {
+  public void try_withResourcesR1R2ToGetThenThrowFinallyDone_throwExceptionFinallyCalled_whenExceptionIsRaised_whenThreeExceptionsAreHandled() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalArgumentException("illegal "));
     try {
@@ -621,7 +621,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowFinallyDone_throwExceptionFinallyCalled_whenSecondExceptionIsRaised_whenThreeExceptionsAreHandled() {
+  public void try_withResourcesR1R2ToGetThenThrowFinallyDone_throwExceptionFinallyCalled_whenSecondExceptionIsRaised_whenThreeExceptionsAreHandled() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalArgumentException("illegal "));
     try {
@@ -639,7 +639,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowFinallyDone_throwExceptionFinallyCalled_whenThirdExceptionIsRaised_whenThreeExceptionsAreHandled() {
+  public void try_withResourcesR1R2ToGetThenThrowFinallyDone_throwExceptionFinallyCalled_whenThirdExceptionIsRaised_whenThreeExceptionsAreHandled() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalArgumentException("illegal "));
 
@@ -658,7 +658,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenGet_returnGetValue_whenExceptionIsNotRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenGet_returnGetValue_whenExceptionIsNotRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenReturn(10);
     when(testHelper.thenGet2()).thenReturn(20);
@@ -676,7 +676,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenGet_calledElseCall_whenExceptionIsNotRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenGet_calledElseCall_whenExceptionIsNotRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenReturn(10);
     when(testHelper.thenGet2()).thenReturn(20);
@@ -695,7 +695,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenGet_calledFinallyDone_whenExceptionIsNotRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenGet_calledFinallyDone_whenExceptionIsNotRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenReturn(10);
     when(testHelper.thenGet2()).thenReturn(20);
@@ -714,7 +714,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenGet_returnFirstThenValue_whenFirstExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenGet_returnFirstThenValue_whenFirstExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet2()).thenReturn(20);
     when(testHelper.thenGet3()).thenReturn(30);
@@ -732,7 +732,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenGet_calledFinallyDone_whenFirstExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenGet_calledFinallyDone_whenFirstExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet2()).thenReturn(20);
     when(testHelper.thenGet3()).thenReturn(30);
@@ -750,7 +750,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenGet_notCalledElseCall_whenFirstExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenGet_notCalledElseCall_whenFirstExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet2()).thenReturn(20);
     when(testHelper.thenGet3()).thenReturn(30);
@@ -769,7 +769,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenGet_thenGetOfExceptionHandlingAreNotCalled_whenFirstExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenGet_thenGetOfExceptionHandlingAreNotCalled_whenFirstExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet2()).thenReturn(20);
     when(testHelper.thenGet3()).thenReturn(30);
@@ -787,7 +787,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenGet_returnFirstThenGet_whenSecondExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenGet_returnFirstThenGet_whenSecondExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -805,7 +805,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenGet_calledFinallyDone_whenSecondExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenGet_calledFinallyDone_whenSecondExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -823,7 +823,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenGet_notCalledElseCall_whenSecondExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenGet_notCalledElseCall_whenSecondExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -842,7 +842,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenGet_ThenGetOfElseIfRaisesIsNotCalled_whenSecondExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenGet_ThenGetOfElseIfRaisesIsNotCalled_whenSecondExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -860,7 +860,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenGet_returnSecondThenGet_whenFirstExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenGet_returnSecondThenGet_whenFirstExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalMonitorStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -878,7 +878,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenGet_calledFinallyDone_whenFirstExceptionOfElseIfRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenGet_calledFinallyDone_whenFirstExceptionOfElseIfRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalMonitorStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -896,7 +896,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenGet_notCalledElseCall_whenElseIfRaisedExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenGet_notCalledElseCall_whenElseIfRaisedExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalMonitorStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -915,7 +915,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenGet_ThenGetOfIfRaisesIsNotCalled_whenFirstExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenGet_ThenGetOfIfRaisesIsNotCalled_whenFirstExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalMonitorStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -933,7 +933,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenGet_returnSecondThenGet_whenSecondExceptionIsRaised_andThreeExceptionsAreHandled() throws Exception {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenGet_returnSecondThenGet_whenSecondExceptionIsRaised_andThreeExceptionsAreHandled() throws Exception {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalPathStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -951,7 +951,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenGet_finallyDoneCalled_whenSecondExceptionIsRaised_andThreeExceptionsAreHandled() throws Exception {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenGet_finallyDoneCalled_whenSecondExceptionIsRaised_andThreeExceptionsAreHandled() throws Exception {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalPathStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -969,7 +969,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenGet_notCalledElseCall_whenSecondExceptionIsRaised_andThreeExceptionsAreHandled() throws Exception {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenGet_notCalledElseCall_whenSecondExceptionIsRaised_andThreeExceptionsAreHandled() throws Exception {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalPathStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -988,7 +988,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenGet_ThenGetOfIfRaisesIsNotCalled_whenSecondExceptionIsRaised_andThreeExceptionsAreHandled() throws Exception {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenGet_ThenGetOfIfRaisesIsNotCalled_whenSecondExceptionIsRaised_andThreeExceptionsAreHandled() throws Exception {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalPathStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1006,7 +1006,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenGet_returnSecondThenGet_whenThirdExceptionIsRaised_andThreeExceptionsAreHandled() throws IOException {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenGet_returnSecondThenGet_whenThirdExceptionIsRaised_andThreeExceptionsAreHandled() throws IOException {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalAccessError());
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1024,7 +1024,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenGet_calledFinallyDone_whenThirdExceptionIsRaised_andThreeExceptionsAreHandled() throws IOException {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenGet_calledFinallyDone_whenThirdExceptionIsRaised_andThreeExceptionsAreHandled() throws IOException {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalAccessError());
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1042,7 +1042,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenGet_notCalledElseCall_whenThirdExceptionIsRaised_andThreeExceptionsAreHandled() throws IOException {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenGet_notCalledElseCall_whenThirdExceptionIsRaised_andThreeExceptionsAreHandled() throws IOException {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalAccessError());
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1060,7 +1060,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenGet_ThenGetOfIfRaisesIsNotCalled_whenThirdExceptionIsRaised_andThreeExceptionsAreHandled() throws IOException {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenGet_ThenGetOfIfRaisesIsNotCalled_whenThirdExceptionIsRaised_andThreeExceptionsAreHandled() throws IOException {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalAccessError());
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1078,7 +1078,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenThrow_returnGetValue_whenExceptionIsNotRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenThrow_returnGetValue_whenExceptionIsNotRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenReturn(10);
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1096,7 +1096,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenThrow_calledElseCall_whenExceptionIsNotRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenThrow_calledElseCall_whenExceptionIsNotRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenReturn(10);
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1115,7 +1115,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenThrow_calledFinallyDone_whenExceptionIsNotRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenThrow_calledFinallyDone_whenExceptionIsNotRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenReturn(10);
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1134,7 +1134,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenThrow_returnFirstThenGet_whenFirstExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenThrow_returnFirstThenGet_whenFirstExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet2()).thenReturn(20);
     when(testHelper.thenGet3()).thenReturn(30);
@@ -1152,7 +1152,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenThrow_notCalledElseCall_whenFirstExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenThrow_notCalledElseCall_whenFirstExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet2()).thenReturn(20);
     when(testHelper.thenGet3()).thenReturn(30);
@@ -1171,7 +1171,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenThrow_calledFinallyDone_whenFirstExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenThrow_calledFinallyDone_whenFirstExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet2()).thenReturn(20);
     when(testHelper.thenGet3()).thenReturn(30);
@@ -1190,7 +1190,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenThrow_thenGetOfExceptionHandlingAreNotCalled_whenFirstExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenThrow_thenGetOfExceptionHandlingAreNotCalled_whenFirstExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet2()).thenReturn(20);
     when(testHelper.thenGet3()).thenReturn(30);
@@ -1208,7 +1208,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenThrow_returnFirstThenGet_whenSecondExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenThrow_returnFirstThenGet_whenSecondExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1226,7 +1226,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenThrow_notCalledElseCall_whenSecondExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenThrow_notCalledElseCall_whenSecondExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1245,7 +1245,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenThrowFinallyDone_calledFinallyDone_whenSecondExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenThrowFinallyDone_calledFinallyDone_whenSecondExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1263,7 +1263,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenThrow_throwThenThrow_whenFirstExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenThrow_throwThenThrow_whenFirstExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalMonitorStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1281,7 +1281,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenThrow_calledfinallyDone_whenFirstExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenThrow_calledfinallyDone_whenFirstExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalMonitorStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1302,7 +1302,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenThrow_notCalledElseCall_whenElseIfRaisedExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenThrow_notCalledElseCall_whenElseIfRaisedExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalMonitorStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1324,7 +1324,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenThrow_ThenGetOfIfRaisesIsNotCalled_whenFirstExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenThrow_ThenGetOfIfRaisesIsNotCalled_whenFirstExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalMonitorStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1345,7 +1345,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenThrow_throwThenThrow_whenSecondExceptionIsRaised_andThreeExceptionsAreHandled() throws Exception {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenThrow_throwThenThrow_whenSecondExceptionIsRaised_andThreeExceptionsAreHandled() throws Exception {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalPathStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1363,7 +1363,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenThrow_notCalledElseCall_whenSecondExceptionIsRaised_andThreeExceptionsAreHandled() throws Exception {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenThrow_notCalledElseCall_whenSecondExceptionIsRaised_andThreeExceptionsAreHandled() throws Exception {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalPathStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1385,7 +1385,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenThrow_ThenGetOfIfRaisesIsNotCalled_whenSecondExceptionIsRaised_andThreeExceptionsAreHandled() throws Exception {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenThrow_ThenGetOfIfRaisesIsNotCalled_whenSecondExceptionIsRaised_andThreeExceptionsAreHandled() throws Exception {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalPathStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1405,7 +1405,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenThrow_returnSecondThenGet_whenThirdExceptionIsRaised_andThreeExceptionsAreHandled() throws IOException {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenThrow_returnSecondThenGet_whenThirdExceptionIsRaised_andThreeExceptionsAreHandled() throws IOException {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalAccessError());
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1423,7 +1423,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenThrow_calledFinallyDone_whenThirdExceptionIsRaised_andThreeExceptionsAreHandled() throws IOException {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenThrow_calledFinallyDone_whenThirdExceptionIsRaised_andThreeExceptionsAreHandled() throws IOException {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalAccessError());
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1444,7 +1444,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenThrow_notCalledElseCall_whenThirdExceptionIsRaised_andThreeExceptionsAreHandled() throws IOException {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenThrow_notCalledElseCall_whenThirdExceptionIsRaised_andThreeExceptionsAreHandled() throws IOException {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalAccessError());
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1466,7 +1466,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenGetElseIfRaisesThenThrow_ThenGetOfIfRaisesIsNotCalled_whenThirdExceptionIsRaised_andThreeExceptionsAreHandled() throws IOException {
+  public void try_withResourcesR1R2ToGetThenGetElseIfRaisesThenThrow_ThenGetOfIfRaisesIsNotCalled_whenThirdExceptionIsRaised_andThreeExceptionsAreHandled() throws IOException {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalAccessError());
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1486,7 +1486,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenGet_calledElseCall_whenExceptionIsNotRaised() {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenGet_calledElseCall_whenExceptionIsNotRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenReturn(10);
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1505,7 +1505,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenGet_callFinallyDone_whenExceptionIsNotRaised() {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenGet_callFinallyDone_whenExceptionIsNotRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenReturn(10);
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1524,7 +1524,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenGet_returnFirstThenValue_whenFirstExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenGet_returnFirstThenValue_whenFirstExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet2()).thenReturn(20);
     when(testHelper.thenGet3()).thenReturn(30);
@@ -1542,7 +1542,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenGet_notCalledElseCall_whenFirstExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenGet_notCalledElseCall_whenFirstExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet2()).thenReturn(20);
     when(testHelper.thenGet3()).thenReturn(30);
@@ -1564,7 +1564,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenGet_thenGetOfExceptionHandlingAreNotCalled_whenFirstExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenGet_thenGetOfExceptionHandlingAreNotCalled_whenFirstExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet2()).thenReturn(20);
     when(testHelper.thenGet3()).thenReturn(30);
@@ -1585,7 +1585,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenGet_callFinallyDone_whenFirstExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenGet_callFinallyDone_whenFirstExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet2()).thenReturn(20);
     when(testHelper.thenGet3()).thenReturn(30);
@@ -1606,7 +1606,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenGet_throwSecondException_whenSecondExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenGet_throwSecondException_whenSecondExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1624,7 +1624,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenGet_callFinallyDone_whenSecondExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenGet_callFinallyDone_whenSecondExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1642,7 +1642,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenGet_notCalledElseCall_whenSecondExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenGet_notCalledElseCall_whenSecondExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1663,7 +1663,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenGet_ThenGetOfElseIfRaisesIsNotCalled_whenSecondExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenGet_ThenGetOfElseIfRaisesIsNotCalled_whenSecondExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1684,7 +1684,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenGet_returnSecondThenGet_whenFirstExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenGet_returnSecondThenGet_whenFirstExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalMonitorStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1702,7 +1702,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenGet_notCallElseCallMe_whenFirstExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenGet_notCallElseCallMe_whenFirstExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalMonitorStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1721,7 +1721,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenGet_callFinallyDone_whenFirstExceptionOfElseIfRaiseIsRaised() {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenGet_callFinallyDone_whenFirstExceptionOfElseIfRaiseIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalMonitorStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1739,7 +1739,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenGet_returnSecondThenGet_whenSecondExceptionIsRaised_andThreeExceptionsAreHandled() throws Exception {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenGet_returnSecondThenGet_whenSecondExceptionIsRaised_andThreeExceptionsAreHandled() throws Exception {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalPathStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1757,7 +1757,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenGet_callFinallyDone_whenSecondExceptionIsRaised_andThreeExceptionsAreHandled() throws Exception {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenGet_callFinallyDone_whenSecondExceptionIsRaised_andThreeExceptionsAreHandled() throws Exception {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalPathStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1775,7 +1775,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenGet_returnGetValue_whenExceptionIsNotRaised() {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenGet_returnGetValue_whenExceptionIsNotRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenReturn(10);
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1793,7 +1793,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenGet_callElseCall_whenExceptionIsNotRaised() {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenGet_callElseCall_whenExceptionIsNotRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenReturn(10);
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1811,7 +1811,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenGet_notCalledElseCall_whenSecondExceptionIsRaised_andThreeExceptionsAreHandled() throws Exception {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenGet_notCalledElseCall_whenSecondExceptionIsRaised_andThreeExceptionsAreHandled() throws Exception {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalPathStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1830,7 +1830,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenGet_returnSecondThenGet_whenThirdExceptionIsRaised_andThreeExceptionsAreHandled() throws IOException {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenGet_returnSecondThenGet_whenThirdExceptionIsRaised_andThreeExceptionsAreHandled() throws IOException {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalAccessError());
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1848,7 +1848,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenGet_callFinallyDone_whenThirdExceptionIsRaised_andThreeExceptionsAreHandled() throws IOException {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenGet_callFinallyDone_whenThirdExceptionIsRaised_andThreeExceptionsAreHandled() throws IOException {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalAccessError());
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1866,7 +1866,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenGet_notCalledElseCall_whenThirdExceptionIsRaised_andThreeExceptionsAreHandled() throws IOException {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenGet_notCalledElseCall_whenThirdExceptionIsRaised_andThreeExceptionsAreHandled() throws IOException {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalAccessError());
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1884,7 +1884,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenThrow_returnGetValue_whenExceptionIsNotRaised() {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenThrow_returnGetValue_whenExceptionIsNotRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenReturn(10);
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1902,7 +1902,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenThrow_callFinallyDone_whenExceptionIsNotRaised() {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenThrow_callFinallyDone_whenExceptionIsNotRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenReturn(10);
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1920,7 +1920,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenThrow_calledElseCall_whenExceptionIsNotRaised() {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenThrow_calledElseCall_whenExceptionIsNotRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenReturn(10);
     when(testHelper.thenGet2()).thenReturn(20);
@@ -1939,7 +1939,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenThrow_throwIfRaiseException_whenFirstExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenThrow_throwIfRaiseException_whenFirstExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet2()).thenReturn(20);
     when(testHelper.thenGet3()).thenReturn(30);
@@ -1957,7 +1957,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenThrow_notCalledElseCall_whenFirstExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenThrow_notCalledElseCall_whenFirstExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet2()).thenReturn(20);
     when(testHelper.thenGet3()).thenReturn(30);
@@ -1978,7 +1978,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenThrow_callFinallyDone_whenFirstExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenThrow_callFinallyDone_whenFirstExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet2()).thenReturn(20);
     when(testHelper.thenGet3()).thenReturn(30);
@@ -1999,7 +1999,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenThrow_throwException_whenSecondExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenThrow_throwException_whenSecondExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -2017,7 +2017,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenThrow_notCalledElseCall_whenSecondExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenThrow_notCalledElseCall_whenSecondExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -2039,7 +2039,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenThrow_callFinallyDone_whenSecondExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenThrow_callFinallyDone_whenSecondExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -2061,7 +2061,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenThrow_throwElseIfRaiseException_whenFirstExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenThrow_throwElseIfRaiseException_whenFirstExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalMonitorStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -2079,7 +2079,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenThrow_notCalledElseCall_whenElseIfRaisedExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenThrow_notCalledElseCall_whenElseIfRaisedExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalMonitorStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -2101,7 +2101,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenThrow_calledFinallyDone_whenElseIfRaisedExceptionIsRaised() {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenThrow_calledFinallyDone_whenElseIfRaisedExceptionIsRaised() {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalMonitorStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -2123,7 +2123,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenThrow_notCalledElseCall_whenSecondExceptionIsRaised_andThreeExceptionsAreHandled() throws Exception {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenThrow_notCalledElseCall_whenSecondExceptionIsRaised_andThreeExceptionsAreHandled() throws Exception {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalPathStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -2145,7 +2145,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenThrow_callFinallyDone_whenSecondExceptionIsRaised_andThreeExceptionsAreHandled() throws Exception {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenThrow_callFinallyDone_whenSecondExceptionIsRaised_andThreeExceptionsAreHandled() throws Exception {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalPathStateException("invalid state"));
     when(testHelper.thenGet2()).thenReturn(20);
@@ -2167,7 +2167,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenThrow_throwElseIfRaiseThrow_whenThirdExceptionIsRaised_andThreeExceptionsAreHandled() throws IOException {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenThrow_throwElseIfRaiseThrow_whenThirdExceptionIsRaised_andThreeExceptionsAreHandled() throws IOException {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalAccessError());
     when(testHelper.thenGet2()).thenReturn(20);
@@ -2185,7 +2185,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenThrow_notCalledElseCall_whenThirdExceptionIsRaised_andThreeExceptionsAreHandled() throws IOException {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenThrow_notCalledElseCall_whenThirdExceptionIsRaised_andThreeExceptionsAreHandled() throws IOException {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalAccessError());
     when(testHelper.thenGet2()).thenReturn(20);
@@ -2207,7 +2207,7 @@ public class TryToGetWithResourcesTest {
   }
 
   @Test
-  public void try_toGetThenThrowElseIfRaisesThenThrow_calledFinallyDone_whenThirdExceptionIsRaised_andThreeExceptionsAreHandled() throws IOException {
+  public void try_withResourcesR1R2ToGetThenThrowElseIfRaisesThenThrow_calledFinallyDone_whenThirdExceptionIsRaised_andThreeExceptionsAreHandled() throws IOException {
     TestHelper testHelper = mock(TestHelper.class);
     when(testHelper.thenGet1()).thenThrow(new IllegalAccessError());
     when(testHelper.thenGet2()).thenReturn(20);
