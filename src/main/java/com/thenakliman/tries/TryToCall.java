@@ -27,126 +27,129 @@ class TryToCall {
   }
 
   @SuppressWarnings("unchecked")
-  ThenHandler ifRaises(final Class<? extends Throwable>... exceptionClasses) {
+  ThenHandler ifRaises(final Class<? extends Throwable>... exceptionsToBeHandle) {
     return new ThenHandler(
             this.callable,
-            asList(exceptionClasses),
+            asList(exceptionsToBeHandle),
             emptyList(),
             this.resources);
   }
 
   public static class ThenHandler {
     final private Callable callable;
-    final private List<Class<? extends Throwable>> exceptionClasses;
+    final private List<Class<? extends Throwable>> exceptionsToBeHandled;
     final private List<IExceptionHandler> exceptionsHandlers;
     final private AutoCloseable[] resources;
 
     public ThenHandler(final Callable callable,
-                       final List<Class<? extends Throwable>> exceptionClasses,
+                       final List<Class<? extends Throwable>> exceptionsToBeHandled,
                        final List<IExceptionHandler> exceptionsHandlers,
                        final AutoCloseable[] resources) {
       this.callable = callable;
-      this.exceptionClasses = exceptionClasses;
+      this.exceptionsToBeHandled = exceptionsToBeHandled;
       this.exceptionsHandlers = exceptionsHandlers;
       this.resources = resources;
     }
 
-    public Executor thenCall(final Consumer<Throwable> thenConsumer) {
-      final ArrayList<IExceptionHandler> registeredExceptionHandlers = new ArrayList<>(this.exceptionsHandlers);
-      final List<IExceptionHandler> exceptionHandlers = this.exceptionClasses.stream()
-              .map(exceptionClass -> new ExceptionConsumer(exceptionClass, thenConsumer))
+    public Executor thenCall(final Consumer<Throwable> onExceptionCallable) {
+      final ArrayList<IExceptionHandler> alreadyRegisteredExceptionHandlers = new ArrayList<>(this.exceptionsHandlers);
+      final List<IExceptionHandler> exceptionHandlers = this.exceptionsToBeHandled.stream()
+              .map(exception -> new ExceptionConsumer(exception, onExceptionCallable))
               .collect(Collectors.toList());
-      registeredExceptionHandlers.addAll(exceptionHandlers);
+
+      alreadyRegisteredExceptionHandlers.addAll(exceptionHandlers);
       return new Executor(
               this.callable,
-              Collections.unmodifiableList(registeredExceptionHandlers),
+              Collections.unmodifiableList(alreadyRegisteredExceptionHandlers),
               DO_NOTHING,
               this.resources);
     }
 
-    public <E extends Throwable> Executor thenThrow(final Function<Throwable, ? extends E> exceptionFunction) throws E {
-      final ArrayList<IExceptionHandler> registeredExceptionHandlers = new ArrayList<>(this.exceptionsHandlers);
-      final List<IExceptionHandler> exceptionHandlers = this.exceptionClasses.stream()
-              .map(exceptionClass -> new ExceptionThrower(exceptionClass, exceptionFunction))
+    public <E extends Throwable> Executor thenThrow(final Function<Throwable, ? extends E> onExceptionFunction) throws E {
+      final ArrayList<IExceptionHandler> alreadyRegisteredExceptionHandlers = new ArrayList<>(this.exceptionsHandlers);
+      final List<IExceptionHandler> exceptionHandlers = this.exceptionsToBeHandled.stream()
+              .map(exception -> new ExceptionThrower(exception, onExceptionFunction))
               .collect(Collectors.toList());
-      registeredExceptionHandlers.addAll(exceptionHandlers);
+
+      alreadyRegisteredExceptionHandlers.addAll(exceptionHandlers);
       return new Executor(
               this.callable,
-              Collections.unmodifiableList(registeredExceptionHandlers),
+              Collections.unmodifiableList(alreadyRegisteredExceptionHandlers),
               DO_NOTHING,
               this.resources);
     }
   }
 
   interface IExceptionHandler {
-    void handleException(Throwable exception);
+    void handleException(final Throwable exception);
 
-    Class<? extends Throwable> getThrowableClass();
+    Class<? extends Throwable> getExceptionToBeHandled();
   }
 
   static class ExceptionConsumer implements IExceptionHandler {
-    final private Class<? extends Throwable> throwableClass;
-    final private Consumer<Throwable> consumer;
+    final private Class<? extends Throwable> exceptionToBeHandled;
+    final private Consumer<Throwable> onExceptionConsumer;
 
-    ExceptionConsumer(Class<? extends Throwable> throwableClass, Consumer<Throwable> consumer) {
-      this.throwableClass = throwableClass;
-      this.consumer = consumer;
+    ExceptionConsumer(final Class<? extends Throwable> exceptionToBeHandled,
+                      final Consumer<Throwable> onExceptionConsumer) {
+      this.exceptionToBeHandled = exceptionToBeHandled;
+      this.onExceptionConsumer = onExceptionConsumer;
     }
 
-    public Class<? extends Throwable> getThrowableClass() {
-      return throwableClass;
+    public Class<? extends Throwable> getExceptionToBeHandled() {
+      return this.exceptionToBeHandled;
     }
 
     @Override
     public void handleException(Throwable exception) {
-      this.consumer.accept(exception);
+      this.onExceptionConsumer.accept(exception);
     }
   }
 
   static class ExceptionThrower implements IExceptionHandler {
-    final private Class<? extends Throwable> throwableClass;
-    final Function<Throwable, ? extends Throwable> exceptionFunction;
+    final private Class<? extends Throwable> exceptionToBeHandled;
+    final Function<Throwable, ? extends Throwable> onExceptionNewExceptionProviderFunction;
 
-    ExceptionThrower(final Class<? extends Throwable> throwableClass,
-                     final Function<Throwable, ? extends Throwable> exceptionFunction) {
-      this.throwableClass = throwableClass;
-      this.exceptionFunction = exceptionFunction;
+    ExceptionThrower(final Class<? extends Throwable> exceptionToBeHandled,
+                     final Function<Throwable, ? extends Throwable> onExceptionNewExceptionProviderFunction) {
+      this.exceptionToBeHandled = exceptionToBeHandled;
+      this.onExceptionNewExceptionProviderFunction = onExceptionNewExceptionProviderFunction;
     }
 
-    public Class<? extends Throwable> getThrowableClass() {
-      return throwableClass;
+    public Class<? extends Throwable> getExceptionToBeHandled() {
+      return this.exceptionToBeHandled;
     }
 
     @Override
-    public void handleException(final Throwable exception) {
-      sneakyThrow(exceptionFunction.apply(exception));
+    public void handleException(final Throwable exceptionToHandle) {
+      throw sneakyThrow(this.onExceptionNewExceptionProviderFunction.apply(exceptionToHandle));
     }
   }
 
   interface IElseCall {
-    IExecutor elseCall(final Callable callable);
+    IExecutor elseCall(final Callable onSuccessCallable);
   }
 
   interface IExecutor {
     void done();
 
-    void finallyDone(final Callable callable);
+    void finallyDone(final Callable finallyCallable);
   }
 
   public static class Executor implements IElseCall, IExecutor {
     final private Callable callable;
-    final private List<IExceptionHandler> exceptions;
-    final private Callable elseCallable;
-    final private AutoCloseable[] resources;
+    final private List<IExceptionHandler> registeredExceptionHandlers;
+    final private Callable onSuccessCallable;
+    final private AutoCloseable[] resourcesToBeClosed;
 
     public Executor(final Callable callable,
-                    final List<IExceptionHandler> exceptions,
+                    final List<IExceptionHandler> registeredExceptionHandlers,
                     final Callable doNothing,
-                    final AutoCloseable[] resources) {
+                    final AutoCloseable[] resourcesToBeClosed) {
       this.callable = callable;
-      this.exceptions = exceptions;
-      this.elseCallable = doNothing;
-      this.resources = resources;
+      this.registeredExceptionHandlers = registeredExceptionHandlers;
+      this.onSuccessCallable = doNothing;
+      this.resourcesToBeClosed = resourcesToBeClosed;
     }
 
     @Override
@@ -155,25 +158,26 @@ class TryToCall {
       try {
         this.callable.call();
         success = true;
-      } catch (Throwable exception) {
-        handleException(exception);
+      } catch (Throwable raisedException) {
+        handleRegisteredExceptions(raisedException);
       }
 
       if (success) {
-        closeResources(this.resources);
-        executeCallable(this.elseCallable);
+        closeResources(this.resourcesToBeClosed);
+        executeCallable(this.onSuccessCallable);
       }
     }
 
-    private void handleException(final Throwable exception) {
-      closeResources(this.resources);
-      final Optional<IExceptionHandler> matchedException = this.exceptions.stream()
-              .filter((exceptionHandler -> exceptionHandler.getThrowableClass().isInstance(exception)))
+    private void handleRegisteredExceptions(final Throwable raisedException) {
+      closeResources(this.resourcesToBeClosed);
+      final Optional<IExceptionHandler> matchedException = this.registeredExceptionHandlers.stream()
+              .filter((exceptionHandler -> exceptionHandler.getExceptionToBeHandled().isInstance(raisedException)))
               .findFirst();
+
       if (matchedException.isPresent()) {
-        matchedException.get().handleException(exception);
+        matchedException.get().handleException(raisedException);
       } else {
-        throw sneakyThrow(exception);
+        throw sneakyThrow(raisedException);
       }
     }
 
@@ -183,32 +187,36 @@ class TryToCall {
       try {
         this.callable.call();
         success = true;
-      } catch (Throwable exception) {
-        handleException(exception);
+      } catch (Throwable raisedException) {
+        handleRegisteredExceptions(raisedException);
       } finally {
         if (success) {
-          closeResources(this.resources);
+          closeResources(this.resourcesToBeClosed);
         }
         executeCallable(finallyCallable);
       }
 
       if (success) {
-        executeCallable(this.elseCallable);
+        executeCallable(this.onSuccessCallable);
       }
     }
 
     @SuppressWarnings("unchecked")
-    public ThenHandler elseIfRaises(final Class<? extends Throwable>... exceptionClasses) {
+    public ThenHandler elseIfRaises(final Class<? extends Throwable>... exceptionsToBeHandled) {
       return new ThenHandler(
               this.callable,
-              Arrays.asList(exceptionClasses),
-              this.exceptions,
-              this.resources);
+              Arrays.asList(exceptionsToBeHandled),
+              this.registeredExceptionHandlers,
+              this.resourcesToBeClosed);
     }
 
     @Override
-    public IExecutor elseCall(final Callable elseCallable) {
-      return new Executor(this.callable, this.exceptions, elseCallable, this.resources);
+    public IExecutor elseCall(final Callable onSuccessCallable) {
+      return new Executor(
+              this.callable,
+              this.registeredExceptionHandlers,
+              onSuccessCallable,
+              this.resourcesToBeClosed);
     }
   }
 }

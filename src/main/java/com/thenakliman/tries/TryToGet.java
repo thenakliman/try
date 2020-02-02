@@ -11,69 +11,72 @@ import java.util.stream.Collectors;
 
 import static com.thenakliman.tries.SneakyThrower.sneakyThrow;
 import static com.thenakliman.tries.Utils.closeResources;
+import static com.thenakliman.tries.Utils.executeCallable;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 
 class TryToGet<T> {
-  final private Supplier<T> valueSupplier;
+  final private Supplier<T> valueProvider;
   final private AutoCloseable[] resources;
 
-  TryToGet(final Supplier<T> valueSupplier) {
-    this.valueSupplier = valueSupplier;
+  TryToGet(final Supplier<T> valueProvider) {
+    this.valueProvider = valueProvider;
     this.resources = new AutoCloseable[0];
   }
 
-  public TryToGet(final Supplier<T> valueSupplier, final AutoCloseable[] resources) {
-    this.valueSupplier = valueSupplier;
+  public TryToGet(final Supplier<T> valueProvider, final AutoCloseable[] resources) {
+    this.valueProvider = valueProvider;
     this.resources = resources;
   }
 
   @SuppressWarnings("unchecked")
-  ThenHandler<T> ifRaises(final Class<? extends Throwable>... exceptionClasses) {
-    return new ThenHandler<T>(valueSupplier, asList(exceptionClasses), Collections.emptyList(), this.resources);
+  ThenHandler<T> ifRaises(final Class<? extends Throwable>... exceptionsToBeHandled) {
+    return new ThenHandler<T>(valueProvider, asList(exceptionsToBeHandled), Collections.emptyList(), this.resources);
   }
 
   public static class ThenHandler<T> {
-    final private Supplier<T> valueSupplier;
-    final private List<Class<? extends Throwable>> exceptionClass;
+    final private Supplier<T> valueProvider;
+    final private List<Class<? extends Throwable>> exceptionsToBeHandled;
     final private List<IExceptionHandler<T>> exceptionHandlers;
     final private AutoCloseable[] resources;
     final private Consumer<T> DO_NOTHING_CONSUMER = (value) -> {
     };
 
-    public ThenHandler(final Supplier<T> valueSupplier,
-                       final List<Class<? extends Throwable>> exceptionClass,
+    public ThenHandler(final Supplier<T> valueProvider,
+                       final List<Class<? extends Throwable>> exceptionsToBeHandled,
                        final List<IExceptionHandler<T>> exceptionHandlers,
                        final AutoCloseable[] resources) {
 
-      this.valueSupplier = valueSupplier;
-      this.exceptionClass = exceptionClass;
+      this.valueProvider = valueProvider;
+      this.exceptionsToBeHandled = exceptionsToBeHandled;
       this.exceptionHandlers = exceptionHandlers;
       this.resources = resources;
     }
 
-    public Executor<T> thenGet(final Function<Throwable, T> getterFromException) {
-      final List<IExceptionHandler<T>> registeredExceptionHandlers = new ArrayList<>(this.exceptionHandlers);
-      final List<ExceptionConsumer<T>> exceptionConsumers = this.exceptionClass.stream()
-              .map(exceptionClass -> new ExceptionConsumer<T>(exceptionClass, getterFromException))
+    public Executor<T> thenGet(final Function<Throwable, T> onExceptionValueProvider) {
+      final List<IExceptionHandler<T>> alreadyRegisteredExceptionHandlers = new ArrayList<>(this.exceptionHandlers);
+      final List<ExceptionConsumer<T>> exceptionConsumers = this.exceptionsToBeHandled.stream()
+              .map(exception -> new ExceptionConsumer<T>(exception, onExceptionValueProvider))
               .collect(Collectors.toList());
-      registeredExceptionHandlers.addAll(exceptionConsumers);
-      return new Executor<T>(
-              this.valueSupplier,
-              unmodifiableList(registeredExceptionHandlers),
+
+      alreadyRegisteredExceptionHandlers.addAll(exceptionConsumers);
+      return new Executor<>(
+              this.valueProvider,
+              unmodifiableList(alreadyRegisteredExceptionHandlers),
               DO_NOTHING_CONSUMER,
               this.resources);
     }
 
-    public Executor<T> thenThrow(final Function<Throwable, ? extends Throwable> exceptionGetter) {
-      final List<IExceptionHandler<T>> registeredExceptionHandlers = new ArrayList<>(this.exceptionHandlers);
-      final List<IExceptionHandler<T>> exceptionThrowers = this.exceptionClass.stream()
-              .map(exceptionClass -> new ExceptionThrower<T>(exceptionClass, exceptionGetter))
+    public Executor<T> thenThrow(final Function<Throwable, ? extends Throwable> onExceptionNewExceptionProvider) {
+      final List<IExceptionHandler<T>> alreadyRegisteredExceptionHandlers = new ArrayList<>(this.exceptionHandlers);
+      final List<IExceptionHandler<T>> exceptionThrowers = this.exceptionsToBeHandled.stream()
+              .map(exception -> new ExceptionThrower<T>(exception, onExceptionNewExceptionProvider))
               .collect(Collectors.toList());
-      registeredExceptionHandlers.addAll(exceptionThrowers);
-      return new Executor<T>(
-              this.valueSupplier,
-              unmodifiableList(registeredExceptionHandlers),
+
+      alreadyRegisteredExceptionHandlers.addAll(exceptionThrowers);
+      return new Executor<>(
+              this.valueProvider,
+              unmodifiableList(alreadyRegisteredExceptionHandlers),
               DO_NOTHING_CONSUMER,
               this.resources);
     }
@@ -87,41 +90,41 @@ class TryToGet<T> {
 
   static class ExceptionConsumer<T> implements IExceptionHandler<T> {
     final private Class<? extends Throwable> throwableClass;
-    final private Function<Throwable, ? extends T> valueGetter;
+    final private Function<Throwable, ? extends T> valueProvider;
 
     ExceptionConsumer(final Class<? extends Throwable> throwableClass,
-                      final Function<Throwable, ? extends T> valueGetter) {
+                      final Function<Throwable, ? extends T> valueProvider) {
       this.throwableClass = throwableClass;
-      this.valueGetter = valueGetter;
+      this.valueProvider = valueProvider;
     }
 
     public Class<? extends Throwable> getThrowableClass() {
-      return throwableClass;
+      return this.throwableClass;
     }
 
     @Override
     public T handleException(Throwable exception) {
-      return this.valueGetter.apply(exception);
+      return this.valueProvider.apply(exception);
     }
   }
 
   static class ExceptionThrower<T> implements IExceptionHandler<T> {
     final private Class<? extends Throwable> throwableClass;
-    final Function<Throwable, ? extends Throwable> exceptionFunction;
+    final Function<Throwable, ? extends Throwable> onExceptionNewExceptionProvider;
 
     ExceptionThrower(final Class<? extends Throwable> throwableClass,
-                     final Function<Throwable, ? extends Throwable> exceptionFunction) {
+                     final Function<Throwable, ? extends Throwable> onExceptionNewExceptionProvider) {
       this.throwableClass = throwableClass;
-      this.exceptionFunction = exceptionFunction;
+      this.onExceptionNewExceptionProvider = onExceptionNewExceptionProvider;
     }
 
     public Class<? extends Throwable> getThrowableClass() {
-      return throwableClass;
+      return this.throwableClass;
     }
 
     @Override
     public T handleException(final Throwable exception) {
-      throw sneakyThrow(exceptionFunction.apply(exception));
+      throw sneakyThrow(this.onExceptionNewExceptionProvider.apply(exception));
     }
   }
 
@@ -136,19 +139,19 @@ class TryToGet<T> {
   }
 
   public static class Executor<T> implements IElseCall<T>, IExecutor<T> {
-    final private Supplier<T> valueSupplier;
-    final private List<IExceptionHandler<T>> exceptionHandlers;
-    final private Consumer<T> elseConsumer;
+    final private Supplier<T> valueProvider;
+    final private List<IExceptionHandler<T>> exceptionsToBeHandled;
+    final private Consumer<T> onSuccessConsumer;
     final private AutoCloseable[] resources;
 
-    public Executor(final Supplier<T> valueSupplier,
-                    final List<IExceptionHandler<T>> exceptionHandlers,
-                    final Consumer<T> elseConsumer,
+    public Executor(final Supplier<T> valueProvider,
+                    final List<IExceptionHandler<T>> exceptionsToBeHandled,
+                    final Consumer<T> onSuccessConsumer,
                     final AutoCloseable[] resources) {
 
-      this.valueSupplier = valueSupplier;
-      this.exceptionHandlers = exceptionHandlers;
-      this.elseConsumer = elseConsumer;
+      this.valueProvider = valueProvider;
+      this.exceptionsToBeHandled = exceptionsToBeHandled;
+      this.onSuccessConsumer = onSuccessConsumer;
       this.resources = resources;
     }
 
@@ -156,26 +159,26 @@ class TryToGet<T> {
     public T done() {
       final T value;
       try {
-        value = this.valueSupplier.get();
-      } catch (Throwable exception) {
-        return handleException(exception);
+        value = this.valueProvider.get();
+      } catch (Throwable raisedException) {
+        return handleException(raisedException);
       }
       closeResources(this.resources);
-      this.elseConsumer.accept(value);
+      this.onSuccessConsumer.accept(value);
       return value;
     }
 
-    private T handleException(Throwable exception) {
+    private T handleException(Throwable raisedException) {
       closeResources(this.resources);
-      Optional<IExceptionHandler<T>> first = this.exceptionHandlers.stream()
-              .filter(exceptionHandler -> exceptionHandler.getThrowableClass().isInstance(exception))
+      Optional<IExceptionHandler<T>> first = this.exceptionsToBeHandled.stream()
+              .filter(exceptionHandler -> exceptionHandler.getThrowableClass().isInstance(raisedException))
               .findFirst();
 
       if (first.isPresent()) {
-        return first.get().handleException(exception);
+        return first.get().handleException(raisedException);
       }
 
-      throw sneakyThrow(exception);
+      throw sneakyThrow(raisedException);
     }
 
     @Override
@@ -183,32 +186,36 @@ class TryToGet<T> {
       final T value;
       boolean success = false;
       try {
-        value = this.valueSupplier.get();
+        value = this.valueProvider.get();
         success = true;
-      } catch (Throwable exception) {
-        return handleException(exception);
+      } catch (Throwable raisedException) {
+        return handleException(raisedException);
       } finally {
         if (success) {
           closeResources(this.resources);
         }
-        Utils.executeCallable(finallyCallable);
+        executeCallable(finallyCallable);
       }
-      this.elseConsumer.accept(value);
+      this.onSuccessConsumer.accept(value);
       return value;
     }
 
     @Override
-    public IExecutor<T> elseCall(final Consumer<T> elseConsumer) {
+    public IExecutor<T> elseCall(final Consumer<T> onSuccessConsumer) {
       return new Executor<T>(
-              this.valueSupplier,
-              this.exceptionHandlers,
-              elseConsumer,
+              this.valueProvider,
+              this.exceptionsToBeHandled,
+              onSuccessConsumer,
               this.resources);
     }
 
     @SuppressWarnings("unchecked")
-    public ThenHandler<T> elseIfRaises(final Class<? extends Throwable>... exceptionClasses) {
-      return new ThenHandler<>(this.valueSupplier, asList(exceptionClasses), this.exceptionHandlers, this.resources);
+    public ThenHandler<T> elseIfRaises(final Class<? extends Throwable>... exceptionsToBeHandled) {
+      return new ThenHandler<>(
+              this.valueProvider,
+              asList(exceptionsToBeHandled),
+              this.exceptionsToBeHandled,
+              this.resources);
     }
   }
 }
