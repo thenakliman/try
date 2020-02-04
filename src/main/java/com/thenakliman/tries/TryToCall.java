@@ -35,6 +35,27 @@ class TryToCall {
             this.resources);
   }
 
+  void done() {
+    try {
+      callable.call();
+    } catch (Throwable raisedException) {
+      closeResources(resources);
+      throw sneakyThrow(raisedException);
+    }
+  }
+
+  void finallyDone(final Callable finallyCallable) {
+    try {
+      this.callable.call();
+    } catch (Throwable raisedException) {
+      closeResources(this.resources);
+      throw sneakyThrow(raisedException);
+    } finally {
+      closeResources(this.resources);
+      executeCallable(finallyCallable);
+    }
+  }
+
   public static class ThenHandler {
     final private Callable callable;
     final private List<Class<? extends Throwable>> exceptionsToBeHandled;
